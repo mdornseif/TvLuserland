@@ -1,11 +1,15 @@
 from wxPython.wx import *
 from wxPython.html import *
-from wxPython.iewin import *
+if wxPlatform == "__WXMSW__":
+    from wxPython.iewin import *
 
 from TvLuserland_wdr import *
 
 import tv.weblog.metaWeblog
 import tv.aggregator.db.services
+from asyncfunccall import *
+
+import urllib
 
 # category cache
 catnames = None
@@ -65,6 +69,8 @@ class EditPostDialog(wxDialog):
 
         # add preview if possible
         if "link" in item:
+            startAsyncFunc(self, urllib.urlopen, (item["link"]))
+
             if wxPlatform == "__WXMSW__":
                 self.html = wxIEHtmlWin(self, -1, size=wxDLG_SZE(self, 300, 100), style = wxNO_FULL_REPAINT_ON_RESIZE|wxSUNKEN_BORDER)
                 self.html.Navigate(item["link"])
@@ -77,7 +83,6 @@ class EditPostDialog(wxDialog):
                 self.html = wxHtmlWindow(self, -1, size=wxDLG_SZE(self, 300, 100),
                                          style=wxSUNKEN_BORDER)
                 self.html.SetPage("<html><body>loading page ...</body></center>")
-                self.html.LoadPage(item["link"])
             self.previewsizer.Add(self.html, 1, wxEXPAND)
             print self.html
 
@@ -99,6 +104,8 @@ class EditPostDialog(wxDialog):
         # WDR: handler declarations for EditPost
         EVT_BUTTON(self, wxID_POST, self.OnPost)
         EVT_SIZE(self, self.OnSize)
+        EVT_ASYNCFUNC_DONE(self, self.OnAsyncFuncDone)
+        
 
     # WDR: methods for EditPost
 
@@ -143,6 +150,18 @@ class EditPostDialog(wxDialog):
     def OnSize(self, event):
         self.Layout()
 
+    def OnAsyncFuncDone(self, event):
+        print "link arrived"
+        url = event.GetReturnValue()
+        link = url.geturl()
+        if link != self.item.get("link", "").strip():
+            if self.item.get("link", "").strip() == self.GetPostlink().GetValue():
+                self.GetPostlink().SetValue(link)
+        if wxPlatform == "__WXMSW__":
+            pass
+        else:
+            self.html.SetPage(url.read())
+        
         
     def OnPost(self, event):
         print "posting"

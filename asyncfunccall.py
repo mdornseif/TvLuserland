@@ -8,13 +8,15 @@ from wxPython.wx import *
 
 myEVT_ASYNCFUNC_DONE = wxNewEventType()
 
-def EVT_ASYNCFUNC_DONE(win, parent, func):
-    win.Connect(parent, -1, myEVT_ASYNCFUNC_DONE, func)
+def EVT_ASYNCFUNC_DONE(win, func):
+    win.Connect(-1, -1, myEVT_ASYNCFUNC_DONE, func)
 
 class AsyncFuncDoneEvent(wxPyEvent):
-    def __init__(self):
+    def __init__(self, returnvalue, workerId):
         wxPyEvent.__init__(self)
-        self.myVal = None
+        self.SetReturnValue(returnvalue)
+        self.SetEventType(myEVT_ASYNCFUNC_DONE)
+        self.SetWorkerId(workerId)
 
     #def __del__(self):
     #    print '__del__'
@@ -26,23 +28,29 @@ class AsyncFuncDoneEvent(wxPyEvent):
     def GetReturnValue(self):
         return self.data
 
-class Worker(threading.Thread):
+    def SetWorkerId(self, val):
+        self.workerId = val
+
+    def GetWorkerId(self):
+        return self.workerId
+
+class _Worker(threading.Thread):
     def __init__(self, parent, func, *args, **kwargs):
         self.func = func
         self.parent = parent
         self.args = args
         self.kwargs = kwargs
         self.myId = wxNewId()
-        self.event = AsyncFuncDoneEvent()
         threading.Thread.__init__(self)
                     
     def run(self):
-        sleep(10)
         # run the function
         val = apply(self.func, self.args, self.kwargs)
         # raise a event with 'val'
-        self.event.SetReturnValue(val)
-        wxPostEvent(self,parent, self.event)
+        self.event = AsyncFuncDoneEvent(val, self.myId)
+        print "posting event"
+        wxPostEvent(self.parent, self.event)
+        print "posted"
         # done
     
     def GetId(self):
@@ -50,5 +58,7 @@ class Worker(threading.Thread):
 
 
 def startAsyncFunc(parent, func, *args, **kwargs):
-    worker = Worker(parent, func, *args, **kwargs)
+    worker = _Worker(parent, func, *args, **kwargs)
+    worker.start()
     return worker.GetId()
+    # don'T we have to check if some threads still exist when exiting the programm?

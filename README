@@ -1,3 +1,8 @@
+TvLuserland is a "News Aggregator" it fetches newws from various
+sources, saves them in a database, displays them and allows you to
+route them to a weblog.
+
+INSTALLATION
 
 To use this software you need some other software: Python, wxPython,
 eGenix-mx-Base-Extensions and pybsddb. For MS Windows you can get all
@@ -10,3 +15,9 @@ software here:
 * mxBase - http://www.egenix.com/files/python/eGenix-mx-Extensions.html#Download-mxBASE
 * pybsddb - http://sourceforge.net/project/showfiles.php?group_id=13900
 
+TvLuserland itself can be found at http://c0re.jp/c0de/snap/
+
+Then edit rssfetch.py to use the feeds you like. Type "python
+rssfetch.py" in the directory you installed TvLuserland. By typing
+"pythonw TvLuserland.py" oe "python TvLuserland.py" you can start the
+GUI.

@@ -19,6 +19,8 @@ from pprint import pprint
 
 import tv.aggregator.db.services
 
+from asyncfunccall import *
+
 class TvMainFrame(wxFrame):
     def __init__(self, parent, id, title,
         pos = wxPyDefaultPosition, size = wxPyDefaultSize,
@@ -31,10 +33,6 @@ class TvMainFrame(wxFrame):
         #SetVendorName()
         # On Mac OS X, the Preferences item goes in a special place, too.
         # A similar variable will be added to wxMac shortly - check the <wx/app.h> header file.
-
-        import asyncfunccall
-        asyncfunccall.startAsyncFunc(self, asyncfunccall)
-
 
         self.CreateMyMenuBar()
         
@@ -70,7 +68,12 @@ class TvMainFrame(wxFrame):
         EVT_MENU(self, ID_PREFERENCES, self.OnPreferences)
         EVT_MENU(self, ID_QUIT, self.OnQuit)
         EVT_CLOSE(self, self.OnCloseWindow)
+        EVT_ASYNCFUNC_DONE(self, self.OnAsyncFuncDone)
         
+        import time
+        startAsyncFunc(self, time.sleep, (10))
+
+
     # WDR: methods for TvMainFrame
     
     def GetItemscroller(self):
@@ -136,7 +139,10 @@ class TvMainFrame(wxFrame):
     
     def OnCloseWindow(self, event):
         self.Destroy()
-    
+
+    def OnAsyncFuncDone(self, event):
+        print "ASYNC EVENT!"
+        print dir(event)
 
 #----------------------------------------------------------------------------
 
