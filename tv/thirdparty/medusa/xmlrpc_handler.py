@@ -5,7 +5,7 @@
 
 # Based on "xmlrpcserver.py" by Fredrik Lundh (fredrik@pythonware.com)
 
-VERSION = "$Id: xmlrpc_handler.py,v 1.1 2002/11/09 08:05:48 drt Exp $"
+VERSION = "$Id: xmlrpc_handler.py,v 1.2 2002/12/28 23:56:38 drt Exp $"
 
 import http_server
 import xmlrpclib
@@ -86,13 +86,16 @@ class collector:
         self.request.channel.set_terminator ('\r\n\r\n')
         self.handler.continue_request (self.data, self.request)
 
+#import xmlrpc_handler
+
+#class rpc_demo (xmlrpc_handler):
+#
+#    def call (self, method, params):
+#        print 'method="%s" params=%s' % (method, params)
+#        return "Sure, that works"
+
+
 if __name__ == '__main__':
-
-    class rpc_demo (xmlrpc_handler):
-
-        def call (self, method, params):
-            print 'method="%s" params=%s' % (method, params)
-            return "Sure, that works"
 
     import asyncore
 

@@ -4,42 +4,61 @@ import os, os.path
 import dircache
 import cPickle
 import time
-from mx.DateTime import DateTime
+from mx.DateTime import DateTime, now
 
 dbdir = 'db'
+_cache = {}
 
 #from config import *
 from pprint import pprint
 
 def getItem(itemid):
+    """Read item defined by itemid from disk or deliver it from our cache"""
+    if itemid in _cache.setdefault('items', {}):
+        return _cache['items'][itemid]
+    
     fn = os.path.join(dbdir, 'weblog', 'items', '%s.pickle' % itemid) 
-    fp = open(fn, 'r')
-    return cPickle.load(fp)
+    fd = open(fn, 'r')
+    item = cPickle.load(fd)
+    fd.close()
+    _cache.setdefault('items', {})[itemid] = item 
+    _cache.setdefault('days', {}).setdefault(DateTime(item['date'].year, item['date'].month, item['date'].day), {})[item['date']] = item['guid']
+    _cache['olddestitem'] = min(_cache.get('olddestitem', now()), item['date'])
+    _cache['newestitem'] = max(_cache.get('newestitem', now() - 10000), item['date'])
+    if type(item['text']) != type('abc'):
+        print "unicode attacks!", itemid
+        item['text'] = item['text'].encode('latin1', 'replace')
+        saveItem(itemid, item)
+    if type(item['title']) != type('abc'):
+        print "unicode attacks!", itemid
+        item['title'] = item['title'].encode('latin1', 'replace')
+        saveItem(itemid, item)
+    return item
 
 
 def getAllItems():
     for x in dircache.listdir(os.path.join(dbdir, 'weblog', 'items')):
         if x.endswith('.pickle'):
             item = getItem(x[:-7])
-        yield item
+            yield item
 
 def getAllItemsByDate():
     initDb()
-    k = bydateandcat[None].keys()
+    k = _cache['days'].keys()
     k.sort()
     k.reverse()
-    for x in k:
-        item = getItem(bydateandcat[None][x])
+    for day in k:
+        for x in _cache['days'][day]:
+            item = getItem(_cache['days'][day][x])
         yield item
     
 
 def saveItem(itemid, item):
-    fn = os.path.join(dbdir, 'weblog', 'items', '%08d.pickle' % itemid)
+    fn = os.path.join(dbdir, 'weblog', 'items', '%s.pickle' % itemid)
     fp = open(fn + '.tmp', 'w')
     cPickle.dump(item, fp)
     fp.close()
     os.rename(fn + '.tmp', fn)
-    log.debug('saved to %s', fn)
 
 def getCategories():
     global categories
@@ -65,223 +84,116 @@ def saveCategories():
 
 # navigation
 
-def getDateList(category=None):
-    initDb()
-    return datelist[category][:]
-
 def getOldestItem(category=None):
-    bydate = initDb()
-    return bydate[category][min(bydate[category])]
+    if category is not None:
+        raise NotImplementedError
+    initDb()
+    return _cache['olddestitem']
 
 
 def getNewestItem(category=None):
-    bydate = initDb()
-    return bydate[category][max(bydate[category])]
+    if category is not None:
+        raise NotImplementedError
+    initDb()
+    return _cache['newestitem']
 
 
-def getSorrundingItems(itemid, category=None):
-    dates = getDateList(category)
-    bydate = initDb()
-    pos = dates.index(getItem(itemid)['date'])
-    if pos < len(dates)-1:
-        next =  bydate[category][dates[pos + 1]]
-    else:
-        next = None
-    if pos > 0:
-        previous = bydate[category][dates[pos - 1]]
-    else:
-        previous = None
-    return (previous, next)
+def getPreviousItem(item):
+    initDb()
+    day = DateTime(item['date'].year, item['date'].month, item['date'].day)
+    oldest = getOldestItem()
+    if day in _cache['days'] and len(_cache['days'][day]) > 0:
+        dayitems = _cache['days'][day]
+        k = dayitems.keys()
+        k.sort()
+        i = k.index(item['date']) - 1
+        if i > 0:
+            return dayitems[k[i]]
 
-
-def getNextItem(itemid, category=None):
-    return getSorrundingItems(itemid, category)[1]
-    
-    
-def getPreviousItem(itemid, category=None):
-    return getSorrundingItems(itemid, category)[0]
-
-
-def getPreviousDayWithItems(day, category=None):
-    thisday = day.day
-    dates = getDateList(category)
-    # seek the first item older
-    while len(dates) > 0:
-        x = dates.pop()
-        if x < day:
-            dates.append(x)
-            break
-
-    # seek the next item not on that day
-    x = None
-    while len(dates) > 0:
-        x = dates.pop()
-        if x.day != thisday:
-            break
-
-    return x
-
-
-def getNextDayWithItems(day, category=None):
-    thisday = day.day
-    dates = getDateList(category)
-    dates.reverse()
-    # seek the first item younger
-    while len(dates) > 0:
-        x = dates.pop()
-        if x > day:
-            dates.append(x)
-            break
-
-    # seek the next item not on that day
-    x = None
-    while len(dates) > 0:
-        x = dates.pop()
-        if x.day != thisday:
-            break
-
-    return x
-            
-def getPreviousMonthWithItems(day, category=None):
-    thismonth = day.month
-    dates = getDateList(category)
-    # seek the first item older
-    while len(dates) > 0:
-        x = dates.pop()
-        if x < day:
-            dates.append(x)
-            break
-
-    # seek the next item not on that day
-    x = None
-    while len(dates) > 0:
-        x = dates.pop()
-        if x.month != thismonth:
-            break
-        x = None
-
-    return x
-    
-def getNextMonthWithItems(day, category=None):
-    thismonth = day.month
-    dates = getDateList(category)
-    dates.reverse()
-    # seek the first item younger
-    while len(dates) > 0:
-        x = dates.pop()
-        if x > day:
-            dates.append(x)
-            break
-
-    # seek the next item not on that day
-    x = None
-    while len(dates) > 0:
-        x = dates.pop()
-        if x.month != thismonth:
-            break
-        x = None
+    while day >= oldest:
+        day = day - 1
+        if day in _cache['days'] and len(_cache['days'][day]) > 0:
+            dayitems = _cache['days'][day]
+            k = dayitems.keys()
+            k.sort()
+            return dayitems[k[-1]] 
         
-    return x
+    return None
 
 
-def getItemsAtDay(day, category=None):
+def getNextItem(item):
+    initDb()
+    day = DateTime(item['date'].year, item['date'].month, item['date'].day)
+    newest = getNewestItem()
+    if day in _cache['days'] and len(_cache['days'][day]) > 0:
+        dayitems = _cache['days'][day]
+        k = dayitems.keys()
+        k.sort()
+        i = k.index(item['date']) + 1
+        if i < len(dayitems):
+            return dayitems[k[i]]
 
+    while day <= newest:
+        day = day + 1
+        if day in _cache['days'] and len(_cache['days'][day]) > 0:
+            dayitems = _cache['days'][day]
+            k = dayitems.keys()
+            k.sort()
+            return dayitems[k[0]]
+
+    return None
+        
+
+def getPreviousDayWithItems(date, category=None):
+    initDb()
+    day = date - 1
+    oldest = getOldestItem()
+    while day >= oldest:
+        if getItemsAtDay(day, category):
+            return day
+        day = day - 1
+
+def getNextDayWithItems(date, category=None):
+    initDb()
+    day = date + 1
+    newest = getNewestItem()
+    while day <= newest:
+        if getItemsAtDay(day, category):
+            return day
+        day = day + 1
+            
+def getPreviousMonthWithItems(date, category=None):
+    return getPreviousDayWithItems(DateTime(date.year, date.month, 1), category) 
     
-    if (category in daylist) and (day in daylist[category]):
-        return daylist[category][day].keys()   
-    else:
+def getNextMonthWithItems(date, category=None):
+    return getNextDayWithItems(DateTime(date.year, date.month, date.days_in_month), category) 
+
+def getItemsAtDay(date, category=None):
+    initDb()
+    day = DateTime(date.year, date.month, date.day)
+    if day not in _cache['days']:
         return []
+    dayitems = _cache['days'][day]
+    k = dayitems.keys()
+    k.sort()
+    ret = []
+    for x in k:
+        if (category is None) or (category in _cache['items'][dayitems[x]]['categories']):
+            ret.append(dayitems[x])
+    return ret
 
-    ### old stuff
-    dates = getDateList(category)
-    
-    start = DateTime(day.year, day.month, day.day)
-    end = start + 1
-
-    # seek first item at that day
-    while len(dates) > 0:
-        x = dates.pop()
-        if x < end:
-            dates.append(x)
-            break
-    #laterdates = []
-    #for x in dates:
-    #    if x < end:
-    #        laterdates = dates[dates.index(x):]
-    #dates = laterdates
-
-    # count items at the day
-    guids = []
-    bydate = initDb()
-    while len(dates) > 0:
-        x = dates.pop()
-        if x < start:
-            break
-        guids.insert(-1, bydate[category][x])
-
-    return guids
 
 
 dbinitialized = 0
-bydateandcat = {None: {}}
-datelist = {}
-daylist = {}
 
 def initDb(reinit = 0):
+    """Fill cache"""
      
-    global bydateandcat, dbinitialized, datelist
+    global dbinitialized
     
     if dbinitialized == 1 and reinit == 0:
-        return bydateandcat
+        return
 
-    # XXX: this does not work out ... hmm ...
-    # check if we can load from cache ... works at least on a Unix Filesystem
-    #try:
-    #    if os.path.getmtime(os.path.join(dbdir, 'weblog', 'items')) < os.path.getmtime(os.path.join(dbdir, 'weblog', 'ItemsByDate.pickle')):
-    #        fd = open(os.path.join(dbdir, 'weblog', 'ItemsByDate.pickle'))
-    #        x = cPickle.load(fd)
-    #        dbinitialized = 1
-    #        return x
-    #except IOError:
-    #    pass
-    #except EOFError:
-    #    pass
-    #except OSError:
-    #    pass
-    
     for item in getAllItems():
-        if item['date'] in bydateandcat[None]:
-            print "Dupe!"
-        bydateandcat[None][item['date']] = item['guid']
-        if None not in daylist:
-            daylist[None] = {}
-        day = DateTime(item['date'].year, item['date'].month, item['date'].day)
-        if day not in daylist[None]:
-            daylist[None][day] = {}
-        daylist[None][day][item['guid']] = 1   
-        for x in item["categories"]:
-            if x not in bydateandcat:
-                bydateandcat[x] = {}
-            bydateandcat[x][item['date']] = item['guid']
-            if x not in daylist:
-                daylist[x] = {}
-            day = DateTime(item['date'].year, item['date'].month, item['date'].day)
-            if day not in daylist[x]:
-                daylist[x][day] = {}
-            daylist[x][day][item['guid']] = 1   
+        pass
     dbinitialized = 1
-
-    for category in bydateandcat.keys():
-        dates = bydateandcat[category].keys()
-        dates.sort()
-        datelist[category] = dates
-    
-    #fd = open(os.path.join(dbdir, 'weblog', 'ItemsByDate.pickle'), 'w')
-    #cPickle.dump(bydateandcat, fd)
-    #fd.close()
-    return bydateandcat
-
-
-#getRadio()
-
-                
