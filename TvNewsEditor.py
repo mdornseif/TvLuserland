@@ -1,11 +1,11 @@
 from wxPython.wx import *
 from wxPython.html import *
+from wxPython.iewin import *
 
 from TvLuserland_wdr import *
 
 import tv.weblog.metaWeblog
 import tv.aggregator.db.services
-import tv.config
 
 # category cache
 catnames = None
@@ -63,14 +63,23 @@ class EditPostDialog(wxDialog):
                 #raise
             dlg.Destroy()
 
-        # add preview if possible and wanted
-        if "link" in item and tv.config.get("ui.autopreview"):
-            self.html = wxHtmlWindow(self, -1, size=wxDLG_SZE(self, 300, 100),
-                                     style=wxSIMPLE_BORDER)
-            self.html.SetPage("<html><body>loading page ...</body></center>")
-            self.html.LoadPage(item["link"])
-            self.previewsizer.Add(self.html)
-
+        # add preview if possible
+        if "link" in item:
+            if wxPlatform == "__WXMSW__":
+                self.html = wxIEHtmlWin(self, -1, size=wxDLG_SZE(self, 300, 100), style = wxNO_FULL_REPAINT_ON_RESIZE|wxSUNKEN_BORDER)
+                self.html.Navigate(item["link"])
+                # Hook up the event handlers for the IE window
+                EVT_MSHTML_BEFORENAVIGATE2(self, -1, self.OnBeforeNavigate2)
+                EVT_MSHTML_NEWWINDOW2(self, -1, self.OnNewWindow2)
+                EVT_MSHTML_DOCUMENTCOMPLETE(self, -1, self.OnDocumentComplete)
+                EVT_MSHTML_TITLECHANGE(self, -1, self.OnTitleChange)
+            else:
+                self.html = wxHtmlWindow(self, -1, size=wxDLG_SZE(self, 300, 100),
+                                         style=wxSUNKEN_BORDER)
+                self.html.SetPage("<html><body>loading page ...</body></center>")
+                self.html.LoadPage(item["link"])
+            self.previewsizer.Add(self.html, 1, wxEXPAND)
+            print self.html
 
         # add categories
         self.categories = []
@@ -89,6 +98,7 @@ class EditPostDialog(wxDialog):
 
         # WDR: handler declarations for EditPost
         EVT_BUTTON(self, wxID_POST, self.OnPost)
+        EVT_SIZE(self, self.OnSize)
 
     # WDR: methods for EditPost
 
@@ -109,6 +119,31 @@ class EditPostDialog(wxDialog):
 
     # WDR: handler implementations for EditPost
 
+
+    def OnBeforeNavigate2(self, evt):
+        self.logEvt('OnBeforeNavigate2', evt)
+
+    def OnNewWindow2(self, evt):
+        self.logEvt('OnNewWindow2', evt)
+        evt.Veto() # don't allow it
+
+    def OnDocumentComplete(self, evt):
+        self.logEvt('OnDocumentComplete', evt)
+
+    def OnTitleChange(self, evt):
+        self.logEvt('OnTitleChange', evt)
+
+    def OnStatusTextChange(self, evt):
+        self.logEvt('OnStatusTextChange', evt)
+
+    def logEvt(self, name, event):
+        print ('%s: %s\n' %
+                       (name, (event.GetLong1(), event.GetLong2(), event.GetText1())))
+
+    def OnSize(self, event):
+        self.Layout()
+
+        
     def OnPost(self, event):
         print "posting"
         # Build a Posting from the Dialog Data

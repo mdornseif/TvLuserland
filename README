@@ -1,0 +1,12 @@
+
+To use this software you need some other software: Python, wxPython,
+eGenix-mx-Base-Extensions and pybsddb. For MS Windows you can get all
+this Software as binary installers - so you don't need a
+Compiler. MacOS X and Unix users might need a compiler. Get the
+software here:
+
+* Python - http://www.python.org/download/
+* wxPython - http://www.wxpython.org/download.php#binaries
+* mxBase - http://www.egenix.com/files/python/eGenix-mx-Extensions.html#Download-mxBASE
+* pybsddb - http://sourceforge.net/project/showfiles.php?group_id=13900
+

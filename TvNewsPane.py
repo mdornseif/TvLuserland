@@ -7,7 +7,7 @@ from TvLuserland_wdr import *
 
 import tv.aggregator.db.items
 
-_items = tv.aggregator.db.items.getitemsByDate(maxitems=100)
+_items = tv.aggregator.db.items.getitemsByDate(maxitems=50)
 
 from pprint import pprint
 
@@ -22,13 +22,8 @@ class NewsItem(wxPanel):
         self.parent = parent
 
         self.html = wxHtmlWindow(self, -1, size=wxDLG_SZE(self, 300, -1),
-                                 style=wxHW_SCROLLBAR_NEVER|wxSIMPLE_BORDER)
+                                 style=wxHW_SCROLLBAR_NEVER)
         self.html.SetPage("<html><body>%s</body></html>" % self.create_html(item))
-        #Under wxGTK:
-        #SetFonts("", "", {10, 12, 14, 16, 19, 24, 32});
-        #Under Windows:
-        #SetFonts("", "", {7, 8, 10, 12, 16, 22, 30});
-        #self.html.SetFonts("", "", (7, 8, 10, 12, 16, 22, 30))
         ir = self.html.GetInternalRepresentation()
         self.html.SetSize( (ir.GetWidth()+5, ir.GetHeight()+5))
         wdr = NewsItemFunc( self, true )
@@ -37,8 +32,6 @@ class NewsItem(wxPanel):
         EVT_BUTTON(self, ID_EDIT, self.OnEdit)
         EVT_BUTTON(self, ID_POST, self.OnPost)
         EVT_BUTTON(self, ID_KILL, self.OnKill)
-
-        self.GetKill().SetToolTip( wxToolTip("%s %s" % (item['guid'], item.get('title'))) )
 
 
     # WDR: methods for NewsItem
