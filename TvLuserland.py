@@ -6,7 +6,7 @@
 # Copyright:    nope
 #----------------------------------------------------------------------------
 
-__rcsid__ = "$Id: TvLuserland.py,v 1.6 2002/11/09 08:34:26 drt Exp $"
+__rcsid__ = "$Id: TvLuserland.py,v 1.7 2002/11/14 15:48:45 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
@@ -16,9 +16,11 @@ from TvLuserland_wdr import *
 from TvNewsPane import *
 from TvNewsEditor import *
 
+import time
 from pprint import pprint
 
 import tv.aggregator.db.services
+import tv.aggregator.db.items
 
 class TvMainFrame(wxFrame):
     def __init__(self, parent, id, title,
@@ -26,6 +28,8 @@ class TvMainFrame(wxFrame):
         style = wxDEFAULT_FRAME_STYLE ):
         wxFrame.__init__(self, parent, id, title, pos, size, style)
         
+        self.laststatusupdate = 0
+
         if wxPlatform == "__WXMAC__":
             wxApp.s_macAboutMenuItemId = wxID_ABOUT
         #self.SetAppName("tv")
@@ -45,7 +49,6 @@ class TvMainFrame(wxFrame):
         ReadNewsFunc(self)
 
         # WDR: handler declarations for TvMainFrame
-        EVT_MENU(self, ID_INSPECTOR, self.OnInspector)
         EVT_BUTTON(self, ID_KILLALL, self.OnKillall)
         EVT_BUTTON(self, ID_NEWSERVICE, self.OnNewservice)
         EVT_BUTTON(self, ID_SERVICELIST, self.OnServicelist)
@@ -54,9 +57,10 @@ class TvMainFrame(wxFrame):
         EVT_MENU(self, wxID_ABOUT, self.OnAbout)
         EVT_MENU(self, ID_PREFERENCES, self.OnPreferences)
         EVT_MENU(self, ID_SHELL, self.OnShell)
+        EVT_MENU(self, ID_INSPECTOR, self.OnInspector)
         EVT_MENU(self, ID_QUIT, self.OnQuit)
         EVT_CLOSE(self, self.OnCloseWindow)
-        
+        EVT_IDLE(self, self.OnIdle)        
 
     # WDR: methods for TvMainFrame
     
@@ -75,16 +79,6 @@ class TvMainFrame(wxFrame):
 
     def CreateMyMenuBar(self):
         self.SetMenuBar( MenuBarFunc() )
-        #file_menu = wxMenu()
-        #help_menu = wxMenu()
-        #help_menu.Append(wxID_ABOUT, "About...", "Program info")
-        #file_menu.Append(ID_PREFERENCES, "Preferences", "Preferences and Configuration")
-        #file_menu.Append(ID_SHELL, "Debug")
-        #file_menu.Append(ID_QUIT, "Quit...", "Quit program")     
-        #menu_bar = wxMenuBar()
-        #menu_bar.Append(file_menu, "File")
-        #menu_bar.Append(help_menu, "&Help")
-        #self.SetMenuBar(menu_bar)
     
     def CreateMyToolBar(self):
         tb = self.CreateToolBar(wxTB_HORIZONTAL|wxNO_BORDER)
@@ -97,12 +91,10 @@ class TvMainFrame(wxFrame):
     def OnKillall(self, event):
         dlg = wxMessageDialog(self, 'Should I really delete all this items?',
                               'Deleting all shown items', wxYES_NO | wxICON_QUESTION)
-        #wxYES_NO | wxNO_DEFAULT | wxCANCEL | wxICON_INFORMATION)
         print dlg.ShowModal(), wxID_YES, wxNO
-        #if dlg.ShowModal() == wxID_YES:
-        #print "yupp"
+        if dlg.ShowModal() == wxID_YES:
+            self.newspane.removeAllItems()
         dlg.Destroy()
-        #self.newspane.removeAllItems()
 
 
     def OnNewservice(self, event):
@@ -152,6 +144,14 @@ class TvMainFrame(wxFrame):
 
     def OnCloseWindow(self, event):
         self.Destroy()
+
+    def OnIdle(self, event):
+        # every 10 seconds show number of unread items
+        if time.time() - 10 > self.laststatusupdate:
+            # #better make this a threaded event, because getnrofitems() is slow
+            self.SetStatusText("Unread: %d" % (tv.aggregator.db.items.getnrofunreaditems()), 2)
+            self.laststatusupdate = time.time()
+        event.Skip()
                                     
 
 #----------------------------------------------------------------------------

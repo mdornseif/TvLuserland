@@ -2,7 +2,7 @@
 
 
 
-__rcsid__ = "$Id: rssfetch.py,v 1.6 2002/11/09 08:34:27 drt Exp $"
+__rcsid__ = "$Id: rssfetch.py,v 1.7 2002/11/14 15:48:45 drt Exp $"
 
 import rssparser
 import random
@@ -15,8 +15,7 @@ import tv.aggregator.db.services
 
 from pprint import pprint
 
-URLS = [
-"http://80211b.weblogger.com/xml/rss.xml",
+URLS = [ "http://80211b.weblogger.com/xml/rss.xml",
 "http://BitStream.ManilaSites.Com/xml/rss.xml",
 "http://Class6F.ManilaSites.Com/xml/rss.xml",
 "http://archipelago.phrasewise.com/xml/rss.xml",
@@ -28,38 +27,36 @@ URLS = [
 "http://blogs.salon.com/0001444/rss.xml",
 "http://blogspace.com/swhack/weblog/index.rss",
 "http://boingboing.net/rss.xml",
-"http://bpdg.blogs.eff.org/index.xml",
-"http://bumppo.net/index.xml",
+"http://bpdg.blogs.eff.org/index.xml", "http://bumppo.net/index.xml",
 "http://buzz.weblogs.com/xml/rss.xml",
 "http://christina.ManilaSites.Com/xml/rss.xml",
 "http://coolstop.com/radio/rss.xml",
 "http://db.cs.helsinki.fi/%7Ejajvirta/pythonowns.rss",
 "http://deepblack.lolitacoders.org/~drt/rss/berkman.rss",
-"http://deepblack.lolitacoders.org/~drt/rss/copyfight.rss",           
-"http://deepblack.lolitacoders.org/~drt/rss/dud.rss",                 
-"http://deepblack.lolitacoders.org/~drt/rss/greplaw.rss",             
-"http://deepblack.lolitacoders.org/~drt/rss/isn.rss",                 
+"http://deepblack.lolitacoders.org/~drt/rss/copyfight.rss",
+"http://deepblack.lolitacoders.org/~drt/rss/dud.rss",
+"http://deepblack.lolitacoders.org/~drt/rss/greplaw.rss",
+"http://deepblack.lolitacoders.org/~drt/rss/isn.rss",
 "http://deepblack.lolitacoders.org/~drt/rss/juristblogs.rss",
-"http://deepblack.lolitacoders.org/~drt/rss/juristcfp.rss",       
-"http://deepblack.lolitacoders.org/~drt/rss/juristconferences.rss",   
-"http://deepblack.lolitacoders.org/~drt/rss/juristpositions.rss", 
-"http://deepblack.lolitacoders.org/~drt/rss/juristwebcasts.rss",   
+"http://deepblack.lolitacoders.org/~drt/rss/juristcfp.rss",
+"http://deepblack.lolitacoders.org/~drt/rss/juristconferences.rss",
+"http://deepblack.lolitacoders.org/~drt/rss/juristpositions.rss",
+"http://deepblack.lolitacoders.org/~drt/rss/juristwebcasts.rss",
 "http://deepblack.lolitacoders.org/~drt/rss/jurpc.rss",
-"http://deepblack.lolitacoders.org/~drt/rss/newsfactor.rss",          
+"http://deepblack.lolitacoders.org/~drt/rss/newsfactor.rss",
 "http://deepblack.lolitacoders.org/~drt/rss/qdepesche.rss",
-"http://deepblack.lolitacoders.org/~drt/rss/quicklinks.rss",         
-"http://deepblack.lolitacoders.org/~drt/rss/quicklinkscc.rss",        
+"http://deepblack.lolitacoders.org/~drt/rss/quicklinks.rss",
+"http://deepblack.lolitacoders.org/~drt/rss/quicklinkscc.rss",
 "http://deepblack.lolitacoders.org/~drt/rss/saverinternet-events.rss",
 "http://deepblack.lolitacoders.org/~drt/rss/sicherheitiminternet.rss",
-"http://deepblack.lolitacoders.org/~drt/rss/vnunet.rss",              
+"http://deepblack.lolitacoders.org/~drt/rss/vnunet.rss",
 "http://degraaff.org/hci/hci-index.rdf",
 "http://dijest.com/aka/categories/shrubbery/rss.xml",
 "http://dijest.com/aka/rss.xml",
 "http://dijest.editthispage.com/xml/rss.xml",
 "http://disco.ucsd.edu/blog/?q=rss&flav=rss",
 "http://diveintomark.org/xml/rss2.xml",
-"http://doc.weblogs.com/xml/rss.xml",
-"http://dws.us/weblog/rss.xml",
+"http://doc.weblogs.com/xml/rss.xml", "http://dws.us/weblog/rss.xml",
 "http://excitedutterances.blogspot.com/rss/excitedutterances.xml",
 "http://export.cnet.com/export/feeds/news/rss/1,11176,,00.xml",
 "http://feed.rssengine.com/articlecentral.com/legalissues.rss",
@@ -111,8 +108,7 @@ URLS = [
 "http://news.openflows.org/newsviaopenflows.rdf",
 "http://newsfeeds.manilasites.com/xml/rss.xml",
 "http://newsround.ground-level.org/xml/rss.xml",
-"http://organica.us/xml/organica.rdf",
-"http://osx.macnn.com/osx.rdf",
+"http://organica.us/xml/organica.rdf", "http://osx.macnn.com/osx.rdf",
 "http://radio.weblogs.com/0001013/rss.xml",
 "http://radio.weblogs.com/0001017/rss.xml",
 "http://radio.weblogs.com/0001275/categories/war/rss.xml",
@@ -136,10 +132,8 @@ URLS = [
 "http://radio.weblogs.com/0110436/rss.xml",
 "http://radio.weblogs.com/0111972/rss.xml",
 "http://research.yale.edu/lawmeme/backend.php",
-"http://slashdot.org/apple.rdf",
-"http://slashdot.org/books.rdf",
-"http://slashdot.org/bsd.rdf",
-"http://slashdot.org/interviews.rdf",
+"http://slashdot.org/apple.rdf", "http://slashdot.org/books.rdf",
+"http://slashdot.org/bsd.rdf", "http://slashdot.org/interviews.rdf",
 "http://slashdot.org/yro.rdf",
 "http://static.userland.com/tomalak/links2.xml",
 "http://static.userland.com/updatelogs/Radio.xml",
@@ -171,8 +165,7 @@ URLS = [
 "http://www.jerf.org/irights/categories/jabber/rss.xml",
 "http://www.joelonsoftware.com/rss.xml",
 "http://www.kill-hup.com/killhupcom.rdf",
-"http://www.krit.de/rss.xml",
-"http://www.kuro5hin.org/backend.rdf",
+"http://www.krit.de/rss.xml", "http://www.kuro5hin.org/backend.rdf",
 "http://www.linuxsecurity.com/linuxsecurity_advisories.rdf",
 "http://www.linuxsecurity.com/linuxsecurity_articles.rdf",
 "http://www.machinelake.com/index.rdf",
@@ -276,22 +269,17 @@ URLS = [
 "http://kode-fu.com/geek/rss.xml",
 #"http://koeln.ccc.de/backend/links.rdf.php",
 "http://koeln.ccc.de/backend/headlines.rdf.php",
-"http://krit.de/kritlog/rss.xml",
-"http://kt.zork.net/GNUe/rss.rdf",
+"http://krit.de/kritlog/rss.xml", "http://kt.zork.net/GNUe/rss.rdf",
 "http://kt.zork.net/kde/rss.rdf",
 "http://kt.zork.net/kernel-traffic/rss.rdf",
 "http://kt.zork.net/wine/rss.rdf",
 "http://lambda.weblogs.com/xml/rss.xml",
 "http://lastminute.rotorjet.com/xml/rss.xml",
-"http://lessig.org/index.rdf",
-"http://live.curry.com/rss.xml",
-"http://monkeyfist.com/rss1.php3",
-"http://online.effbot.org/rss.xml",
+"http://lessig.org/index.rdf", "http://live.curry.com/rss.xml",
+"http://monkeyfist.com/rss1.php3", "http://online.effbot.org/rss.xml",
 #"http://radio.weblogs.com/0112292/rss.xml",
-"http://rss.actsofvolition.com",
-#"http://slashdot.org/apple.rss",
-#"http://slashdot.org/bsd.rss",
-#"http://slashdot.org/interviews.rss",
+"http://rss.actsofvolition.com", #"http://slashdot.org/apple.rss",
+#"http://slashdot.org/bsd.rss", #"http://slashdot.org/interviews.rss",
 "http://trainedmonkey.com/news/rss.php?s=6",
 "http://weblog.infoworld.com/udell/rss.xml",
 "http://www.aaronsw.com/weblog/index.xml",
@@ -308,9 +296,8 @@ URLS = [
 "http://www.theregister.co.uk/tonys/slashdot.rdf",
 "http://www.voidstar.com/rssify.php?url=http://bgbg.blogspot.com",
 "http://www.voidstar.com/rssify.php?url=http://excitedutterances.blogspot.com/",
-"http://zem.squidly.org/weblog/rss.xml",
-# "http://www.syndic8.com/genfeed.php?Format=rss",
-    ]
+"http://zem.squidly.org/weblog/rss.xml", #
+"http://www.syndic8.com/genfeed.php?Format=rss", ]
 
 
 # inspired by the effbot
@@ -339,17 +326,24 @@ def descape(string):
     string = charrefhex_re.sub(descape_charrefhex, string)
     return charref_re.sub(descape_charref, string)
 
-def fixItem(item, sourceurl, channel = {}):
+def generateguid(item, service = {}):
+    return "%s-%s" % (service.get("link", service.get("description", "unspec")),
+                      md5.new("%s%s%s" % (item.get("title", ""),
+                                          item.get("link", ""),
+                                          item.get("description", ""))).hexdigest()) 
+
+
+def fixItem(item, sourceurl, service = {}):
     # add guid if needed
     if 'guid' not in item:
-        item['guid'] = "%s-%s" % (channel.get("link", channel.get("description", "unspec")), md5.new("%s%s%s" % (item.get("title", ""), item.get("link", ""), item.get("description", ""))).hexdigest()) 
+        item['guid'] = generateguid(item, service)
     if "date" in item:
         item["TVdateobject"] = mx.DateTime.Parser.DateTimeFromString(item["date"])
     else:
         item["TVdateobject"] = mx.DateTime.now()
     item["TVsourceurl"] = sourceurl
     if "title" in item:
-        item["title"] = descape(item["title"])
+        item["title"] = descape(item["title"].strip())
     if "description" in item:
         item["description"] = descape(item["description"])
         
@@ -375,12 +369,12 @@ if __name__ == '__main__':
 
     for url in urls:
         print url
+        print "->",
+        sys.stdout.flush()
         service = tv.aggregator.db.services.getfeedinfo(url)
         result = rssparser.parse(url)
         service.update(result["channel"])
         fixService(service, result.get("etag"), result.get("modified"))
-        print "->", 
-        sys.stdout.flush()
         for x in result["items"]:
             fixItem(x, url, result["channel"])
             if tv.aggregator.db.items.checkdupe(x):
@@ -399,5 +393,5 @@ if __name__ == '__main__':
         #pprint(service)
         tv.aggregator.db.services.savefeedinfo(service)
         
-    tv.aggregator.db.items.save()
+    #tv.aggregator.db.items.save()
     #tv.aggregator.db.items.getitemsByDate("2002-10-22 12:53:27.15", 2)

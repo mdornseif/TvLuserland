@@ -1,6 +1,5 @@
 * neue items zum pane hinzufügen
 * items später rendern
-* deleted item DB
 * deleteallitemsfromsource() wenn keine items vorhanden sind -> exception
 * postings per service merken
 * Hand Icon when over a wxLinkText
@@ -8,12 +7,11 @@
 * Bei Newfeeds die Möglichkeit geben mehrere feeds gleichzeitig zu subscriben
 * Asyncrones Posten
 * bsddb recovery
-* Beim Posten verschieben sich die Buttons
-* Show nr of unread items in toolbar
 * Asyncrones Caregory reading
 * HTMLWindow tunen.
 * Good Preview on MacOS X
 * Urls in Statusbar
+* Mail Newsitems
 * RSS aus der GUI holen
 * Cut-und-Paste aus preview
 * Dupprobleme / BSDDUPDEB
@@ -33,6 +31,7 @@
 * XML redirection http://radio.userland.com/howtoRedirectRss
 * Position neuer Fenster
 * chaching
+* Undo beim löschen
 
 Done
 * URL-Redirection auflösen
@@ -49,3 +48,5 @@ Done
 * Resizing
 * PyCrust
 * Removing Feeds is to slow
+* Show nr of unread items in toolbar
+* Beim Posten verschieben sich die Buttons

@@ -6,7 +6,7 @@
 # Copyright:    
 #----------------------------------------------------------------------------
 
-__rcsid__ = "$Id: TvServiceList.py,v 1.2 2002/11/04 22:48:37 drt Exp $"
+__rcsid__ = "$Id: TvServiceList.py,v 1.3 2002/11/14 15:48:45 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.lib.mixins.listctrl import wxColumnSorterMixin, wxListCtrlAutoWidthMixin
@@ -53,7 +53,10 @@ class TestListCtrl(wxListCtrl, wxListCtrlAutoWidthMixin):
         wxListCtrlAutoWidthMixin.__init__(self)
         self.columntitles = [("title", "Title"),
                              ("publicname", "Public Name"),
-                             ("TVsourceurl", "URL")]
+                             ("TVsourceurl", "URL"),
+                             ("TVlastnewitem", "Last new Item"),
+                             ("TVitemsfetched", "Items Fetched"),
+                             ("TVlastfetched", "Last Request")]
         self.columntokey = []
 
         pos = 0

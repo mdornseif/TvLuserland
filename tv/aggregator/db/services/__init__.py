@@ -8,7 +8,7 @@ reading rss files from the network, 'config' is only to be written by the GUI.
 
 """
 
-__rcsid__ = "$Id: __init__.py,v 1.6 2002/11/09 08:34:27 drt Exp $"
+__rcsid__ = "$Id: __init__.py,v 1.7 2002/11/14 15:48:45 drt Exp $"
 
 # Try using cPickle and cStringIO if available.
 try:
@@ -72,7 +72,7 @@ def getservice(sourceurl):
             data["config"]["publicname"] = data["feedinfo"].get("title", "-none-")
         if "privatename" not in data["config"]:
             data["config"]["privatename"] = data["config"].get("publicname", "-none-")
-        if "publiclink" not in data["config"]:
+        if data["config"].get("publiclink", "") == "":
             data["config"]["publiclink"] = data["feedinfo"].get("link", "-none-" )
             
         return data

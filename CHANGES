@@ -1,3 +1,6 @@
+* Database format changet - you might see dupes if upgrading
+* Kill button in post dialog stopps jumping arround when posting
+* Servicelist shows a bit more information
 * Items in Newspanel now show their date
 
 Sat Nov  9 09:31:29 CET 2002

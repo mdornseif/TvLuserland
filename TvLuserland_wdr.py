@@ -105,12 +105,12 @@ def EditPostFunc( parent, call_fit = true, set_sizer = true ):
     item20 = wxStaticText( parent, ID_POSTINGTEXT, "", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT )
     item18.AddWindow( item20, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item18.AddSpacer( 10, 10, 3, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 )
+    item18.AddSpacer( 10, 10, 1, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 )
 
     item21 = wxButton( parent, ID_KILL, "Kill", wxDefaultPosition, wxDefaultSize, 0 )
     item18.AddWindow( item21, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item18.AddSpacer( 10, 10, 1, wxALIGN_CENTRE|wxALL, 5 )
+    item18.AddSpacer( 10, 10, 0, wxALIGN_CENTRE|wxALL, 5 )
 
     item22 = wxButton( parent, wxID_CANCEL, "Cancel", wxDefaultPosition, wxDefaultSize, 0 )
     item18.AddWindow( item22, 0, wxALIGN_CENTRE|wxALL, 5 )
@@ -203,6 +203,7 @@ def NewsItemFunc( parent, call_fit = true, set_sizer = true ):
     item4.AddSpacer( 10, 10, 1, wxALIGN_CENTRE|wxALL, 5 )
 
     item6 = wxStaticText( parent, ID_DATE, "-unset-", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT )
+    item6.SetFont( wxFont( 9, wxSWISS, wxNORMAL, wxNORMAL ) )
     item4.AddWindow( item6, 0, wxALIGN_CENTRE|wxRIGHT, 10 )
 
     item0.AddSizer( item4, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT, 10 )

@@ -1,6 +1,6 @@
 # Try using cPickle and cStringIO if available.
 
-__rcsid__ = "$Id: __init__.py,v 1.5 2002/11/14 13:33:03 drt Exp $"
+__rcsid__ = "$Id: __init__.py,v 1.6 2002/11/14 15:48:45 drt Exp $"
 
 try:
     from cPickle import load, dump, loads, dumps
@@ -253,7 +253,7 @@ def checkdupe(item):
             _dupetitledb.put(key=str(item["title"]), data=item["guid"])
         if "link" in item:
             _dupelinkdb.put(key=str(item["link"]), data=item["guid"])
-        if "description" in item:
+        if item.get("description", "").strip() != "":
             _dupedescriptiondb.put(key=md5.new(item["description"]).digest(), data=item["guid"])
     return ret
 

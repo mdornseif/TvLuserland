@@ -1,4 +1,4 @@
-__rcsid__ = "$Id: TvNewsPane.py,v 1.9 2002/11/10 17:34:07 drt Exp $"
+__rcsid__ = "$Id: TvNewsPane.py,v 1.10 2002/11/14 15:48:45 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
@@ -58,7 +58,7 @@ class NewsItem(wxPanel):
                                  style=wxHW_SCROLLBAR_NEVER)
         self.html.SetPage("<html><body>%s</body></html>" % item.get("description", "-no description-"))
         ir = self.html.GetInternalRepresentation()
-        self.html.SetSize( (ir.GetWidth()+5, ir.GetHeight()+5))
+        self.html.SetSize( (min(800, ir.GetWidth()+5), ir.GetHeight()+5))
         wdr = NewsItemFunc( self, true )
         self.SetLabelAndResize(self.GetTitle(), item.get("title", ""))
         self.GetLink().SetLabel(item.get("link", ""))
@@ -68,10 +68,8 @@ class NewsItem(wxPanel):
         # WDR: handler declarations for NewsItem
         EVT_BUTTON(self, ID_SOURCE, self.OnSource)
         EVT_BUTTON(self, ID_EDIT, self.OnEdit)
-        #EVT_BUTTON(self, ID_POST, self.OnPost)
         EVT_BUTTON(self, ID_KILL, self.OnKill)
         EVT_BUTTON(self, ID_SOURCE, self.OnSource)
-        #EVT_LEFT_UP(self.GetSource(), self.OnSource)
         EVT_SIZE(self, self.OnSize)
 
     def SetLabelAndResize(self, control, label):
@@ -121,15 +119,12 @@ class NewsItem(wxPanel):
         dialog = EditPostDialog(self.parent, -1, item = self.item, killfunc = lambda: self.parent.removeItem(self.GetId(), self.item))
         dialog.Show()
 
-    def OnPost(self, event):
-        print "POST --- nada!"
-
     def OnKill(self, event):
         self.parent.removeItem(self.GetId(), self.item)
         self.Destroy()
 
     def OnSize(self, event):
-        print "sizing", id(self)
+        # XXX
         #wxPanel.OnSize(self, event)
         event.Skip()
 
@@ -157,6 +152,7 @@ class TvNewsPane(wxScrolledWindow):
         self.sizer.SetVirtualSizeHints(self)
         #EVT_CHILD_FOCUS(self, self.OnChildFocus)
         self.SetSize((660, 400))
+        self.fixlayout()
         wxCallAfter(self.Scroll, 0, 0) # scroll back to top after initial events
 
     def createContentBox(self):
@@ -182,24 +178,20 @@ class TvNewsPane(wxScrolledWindow):
         tv.aggregator.db.items.deleteitem(item['guid'])
         # remove window
         self.sizer.Remove(self.FindWindowById(cId))
-        print self.sizer.GetMinSize(), self.sizer.GetSize(), '-', self.GetSize(), self.GetVirtualSize()
+        self.fixlayout()
+        
+    def removeAllItems(self):
+        # XXX: fix me
+        for x in self.displayed_items:
+            print x.GetId()
+            print x.item
+
+    def fixlayout(self):
         w, h = self.sizer.GetMinSize()
         self.SetVirtualSizeHints(w, h)
         #self.sizer.Layout()
         self.Layout()
         self.Refresh()
         self.AdjustScrollbars()
-        print self.sizer.GetMinSize(), self.sizer.GetSize(), '-', self.GetSize(), self.GetVirtualSize()
-        #wxCallAfter(self.Scroll, 0, 0) # scroll back to top after initial events
-        # XXX resize
-
-    def removeAllItems(self):
-        for x in self.displayed_items:
-            print x.GetId()
-            print x.item
         
-
-    def refresh(self):
-        print self.sizer.GetMinSize(), self.sizer.GetSize(), '-', self.GetSize(), self.GetVirtualSize()
-        
-        
+                     
