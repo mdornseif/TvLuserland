@@ -1,4 +1,4 @@
-__rcsid__ = "$Id: TvNewsPane.py,v 1.8 2002/11/09 20:29:35 drt Exp $"
+__rcsid__ = "$Id: TvNewsPane.py,v 1.9 2002/11/10 17:34:07 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
@@ -20,74 +20,30 @@ from pprint import pprint
 
 def inspect(object):
     probes = [
-              'GetAutoLayout',
-              'GetBackgroundColour',
-              'GetBestSize',
-              'GetBorder',
-              'GetCaret',
-              'GetCharHeight',
-              'GetCharWidth',
-              'GetClassName',
-              'GetClientAreaOrigin',
-              'GetClientRect',
-              'GetClientSize',
-              'GetClientSizeTuple',
-              'GetConstraints',
-              'GetContainingSizer',
-              'GetCursor',
-              'GetDefaultItem',
-              'GetDropTarget',
-              'GetEventHandler',
-              'GetEvtHandlerEnabled',
-              'GetFont',
-              'GetForegroundColour',
-              'GetGrandParent',
-              'GetHandle',
-              'GetHelpText',
-              'GetId',
-              'GetLabel',
-              'GetMaxSize',
-              'GetMinSize',
-              'GetMinSizeTuple',
-              'GetName',
-              'GetNextHandler',
-              'GetOrientation',
-              'GetParent',
-              'GetPosition',
-              'GetPositionTuple',
-              'GetRect',
-              'GetScaleX',
-              'GetScaleY',
-              'GetScrollPageSize',
-              'GetScrollPixelsPerUnit',
-              'GetScrollPos',
-              'GetScrollRange',
-              'GetScrollThumb',
-              'GetSize',
-              'GetSizeTuple',
-              'GetSizer',
-              'GetTargetWindow',
-              'GetTextExtent',
-              'GetTitle',
-              'GetToolTip',
-              'GetUpdateRegion',
-              'GetValidator',
-              'GetViewStart',
-              'GetVirtualSize',
-              'GetVirtualSizeTuple',
-              'GetWindowStyleFlag',
-              'HasCapture',
-              'HasScrollbar',
-              'HitTest',
-              'InitDialog',
-              'IsBeingDeleted',
-              'IsEnabled',
-              'IsExposed',
-              'IsExposedPoint',
-              'IsExposedRect',
-              'IsRetained',
-              'IsShown',
-              'IsTopLevel']
+              'GetAutoLayout', 'GetBackgroundColour', 'GetBestSize',
+              'GetBorder', 'GetCaret', 'GetCharHeight',
+              'GetCharWidth', 'GetClassName', 'GetClientAreaOrigin',
+              'GetClientRect', 'GetClientSize', 'GetClientSizeTuple',
+              'GetConstraints', 'GetContainingSizer', 'GetCursor',
+              'GetDefaultItem', 'GetDropTarget', 'GetEventHandler',
+              'GetEvtHandlerEnabled', 'GetFont',
+              'GetForegroundColour', 'GetGrandParent', 'GetHandle',
+              'GetHelpText', 'GetId', 'GetLabel', 'GetMaxSize',
+              'GetMinSize', 'GetMinSizeTuple', 'GetName',
+              'GetNextHandler', 'GetOrientation', 'GetParent',
+              'GetPosition', 'GetPositionTuple', 'GetRect',
+              'GetScaleX', 'GetScaleY', 'GetScrollPageSize',
+              'GetScrollPixelsPerUnit', 'GetScrollPos',
+              'GetScrollRange', 'GetScrollThumb', 'GetSize',
+              'GetSizeTuple', 'GetSizer', 'GetTargetWindow',
+              'GetTextExtent', 'GetTitle', 'GetToolTip',
+              'GetUpdateRegion', 'GetValidator', 'GetViewStart',
+              'GetVirtualSize', 'GetVirtualSizeTuple',
+              'GetWindowStyleFlag', 'HasCapture', 'HasScrollbar',
+              'HitTest', 'InitDialog', 'IsBeingDeleted', 'IsEnabled',
+              'IsExposed', 'IsExposedPoint', 'IsExposedRect',
+              'IsRetained', 'IsShown', 'IsTopLevel'
+              ]
     
 class NewsItem(wxPanel):
     def __init__(self, parent, item, id = -1, pos = wxPyDefaultPosition,
@@ -247,26 +203,3 @@ class TvNewsPane(wxScrolledWindow):
         print self.sizer.GetMinSize(), self.sizer.GetSize(), '-', self.GetSize(), self.GetVirtualSize()
         
         
-
-    def OnChildFocus(self, evt):
-        # If the child window that gets the focus is not visible,
-        # this handler will try to scroll enough to see it.  If you
-        # need to handle horizontal auto-scrolling too then this will
-        # need adapted.
-        evt.Skip()
-        child = evt.GetWindow()
-
-        sppu_y = self.GetScrollPixelsPerUnit()[1]
-        vs_y   = self.GetViewStart()[1]
-        cpos = child.GetPosition()
-        csz  = child.GetSize()
-
-        # is it above the top?
-        if cpos.y < 0:
-            new_vs = cpos.y / sppu_y
-            self.Scroll(-1, new_vs)
-
-        # is it below the bottom ?
-        if cpos.y + csz.height > self.GetClientSize().height:
-            diff = (cpos.y + csz.height - self.GetClientSize().height) / sppu_y
-            self.Scroll(-1, vs_y + diff + 1)
