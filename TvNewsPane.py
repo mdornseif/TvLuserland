@@ -1,4 +1,4 @@
-__rcsid__ = "$Id: TvNewsPane.py,v 1.6 2002/11/05 10:49:02 drt Exp $"
+__rcsid__ = "$Id: TvNewsPane.py,v 1.7 2002/11/09 08:34:27 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
@@ -18,6 +18,77 @@ from pprint import pprint
 
 # WDR: classes
 
+def inspect(object):
+    probes = [
+              'GetAutoLayout',
+              'GetBackgroundColour',
+              'GetBestSize',
+              'GetBorder',
+              'GetCaret',
+              'GetCharHeight',
+              'GetCharWidth',
+              'GetClassName',
+              'GetClientAreaOrigin',
+              'GetClientRect',
+              'GetClientSize',
+              'GetClientSizeTuple',
+              'GetConstraints',
+              'GetContainingSizer',
+              'GetCursor',
+              'GetDefaultItem',
+              'GetDropTarget',
+              'GetEventHandler',
+              'GetEvtHandlerEnabled',
+              'GetFont',
+              'GetForegroundColour',
+              'GetGrandParent',
+              'GetHandle',
+              'GetHelpText',
+              'GetId',
+              'GetLabel',
+              'GetMaxSize',
+              'GetMinSize',
+              'GetMinSizeTuple',
+              'GetName',
+              'GetNextHandler',
+              'GetOrientation',
+              'GetParent',
+              'GetPosition',
+              'GetPositionTuple',
+              'GetRect',
+              'GetScaleX',
+              'GetScaleY',
+              'GetScrollPageSize',
+              'GetScrollPixelsPerUnit',
+              'GetScrollPos',
+              'GetScrollRange',
+              'GetScrollThumb',
+              'GetSize',
+              'GetSizeTuple',
+              'GetSizer',
+              'GetTargetWindow',
+              'GetTextExtent',
+              'GetTitle',
+              'GetToolTip',
+              'GetUpdateRegion',
+              'GetValidator',
+              'GetViewStart',
+              'GetVirtualSize',
+              'GetVirtualSizeTuple',
+              'GetWindowStyleFlag',
+              'HasCapture',
+              'HasScrollbar',
+              'HitTest',
+              'InitDialog',
+              'IsBeingDeleted',
+              'IsEnabled',
+              'IsExposed',
+              'IsExposedPoint',
+              'IsExposedRect',
+              'IsRetained',
+              'IsShown',
+              'IsTopLevel']
+    
 class NewsItem(wxPanel):
     def __init__(self, parent, item, id = -1, pos = wxPyDefaultPosition,
                  size=wxPyDefaultSize, style=wxSUNKEN_BORDER):
@@ -43,6 +114,7 @@ class NewsItem(wxPanel):
         EVT_BUTTON(self, ID_KILL, self.OnKill)
         EVT_BUTTON(self, ID_SOURCE, self.OnSource)
         EVT_LEFT_UP(self.GetSource(), self.OnSource)
+        EVT_SIZE(self, self.OnSize)
 
     def SetLabelAndResize(self, control, label):
         control.SetLabel(str(label))
@@ -95,22 +167,34 @@ class NewsItem(wxPanel):
         self.parent.removeItem(self.GetId(), self.item)
         self.Destroy()
 
+    def OnSize(self, event):
+        print "sizing", id(self)
+        #wxPanel.OnSize(self, event)
+        event.Skip()
+
 
 class TvNewsPane(wxScrolledWindow):
     def __init__(self, parent):
         wxScrolledWindow.__init__(self, parent, -1,
                                   style = wxTAB_TRAVERSAL|wxSIMPLE_BORDER)
-        
+
+
+        from pprint import pprint
+        # XXX: a weak reference might be better
         self.displayed_items = []
+        #self.panel = wxPanel(self, -1)
         self.sizer = self.createContentBox()
+        self.SetAutoLayout( true )
         self.SetSizer(self.sizer)
-        
+        #self.sizer.Fit( self )
+        #self.sizer.SetSizeHints( self )
+         
         # The following is all that is needed to integrate the sizer and the
         # scrolled window.  In this case we will only support vertical scrolling.
         self.EnableScrolling(false, true)
         self.SetScrollRate(0, 20)
         self.sizer.SetVirtualSizeHints(self)
-        EVT_CHILD_FOCUS(self, self.OnChildFocus)
+        #EVT_CHILD_FOCUS(self, self.OnChildFocus)
         self.SetSize((660, 400))
         wxCallAfter(self.Scroll, 0, 0) # scroll back to top after initial events
 
@@ -118,7 +202,7 @@ class TvNewsPane(wxScrolledWindow):
         box = wxBoxSizer(wxVERTICAL)        
         for item in _items:
             x = self.createItemBox(item)
-            box.Add(x)
+            box.Add(x, 0, wxGROW)
             self.displayed_items.append(x)
         box.Add(5, 5)
         return box
@@ -129,20 +213,35 @@ class TvNewsPane(wxScrolledWindow):
         return item['itemBox']
 
     def removeItem(self, cId, item):
+        """Remove a item from the newspane and the database.
+
+        Needs the wxID of the Newsitem and the item itself"""
         # XXX better give more data to deleteitem
+        # remove from db
         tv.aggregator.db.items.deleteitem(item['guid'])
+        # remove window
         self.sizer.Remove(self.FindWindowById(cId))
-        self.sizer.Layout()
+        print self.sizer.GetMinSize(), self.sizer.GetSize(), '-', self.GetSize(), self.GetVirtualSize()
+        w, h = self.sizer.GetMinSize()
+        self.SetVirtualSizeHints(w, h)
+        #self.sizer.Layout()
         self.Layout()
         self.Refresh()
         self.AdjustScrollbars()
-        self.refresh()
+        print self.sizer.GetMinSize(), self.sizer.GetSize(), '-', self.GetSize(), self.GetVirtualSize()
         #wxCallAfter(self.Scroll, 0, 0) # scroll back to top after initial events
         # XXX resize
 
+    def removeAllItems(self):
+        for x in self.displayed_items:
+            print x.GetId()
+            print x.item
+        
+
     def refresh(self):
-        _items = tv.aggregator.db.items.getitemsByDate(maxitems=100)
-        print "XXX: refreshing"
+        print self.sizer.GetMinSize(), self.sizer.GetSize(), '-', self.GetSize(), self.GetVirtualSize()
+        
+        
 
     def OnChildFocus(self, evt):
         # If the child window that gets the focus is not visible,

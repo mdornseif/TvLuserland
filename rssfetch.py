@@ -1,6 +1,8 @@
 #!/usr/local/bin/python
 
-__rcsid__ = "$Id: rssfetch.py,v 1.5 2002/11/05 16:54:00 drt Exp $"
+
+
+__rcsid__ = "$Id: rssfetch.py,v 1.6 2002/11/09 08:34:27 drt Exp $"
 
 import rssparser
 import random
@@ -312,8 +314,8 @@ URLS = [
 
 
 # inspired by the effbot
-charref_re = re.compile('&#([0-9]+[^0-9]);')
-charrefhex_re = re.compile('&#x([0-9a-fA-F]+[^0-9]);')
+charref_re = re.compile('&#([0-9]+);')
+charrefhex_re = re.compile('&#x([0-9a-fA-F]+);')
 entity_re = re.compile("&(\w+?);")
 
 def descape_entity(m, defs=htmlentitydefs.entitydefs):
@@ -324,12 +326,18 @@ def descape_entity(m, defs=htmlentitydefs.entitydefs):
         return m.group(0) # use as is
 
 def descape_charref(m):
-    return chr(int(m.group(1)))
+    try:
+        return chr(int(m.group(1)))
+    except ValueError:
+        return "&#%s;" % m.group(1)
+
+def descape_charrefhex(m):
+    return chr(int(m.group(1), 16))
     
 def descape(string):
     string = entity_re.sub(descape_entity, string)
+    string = charrefhex_re.sub(descape_charrefhex, string)
     return charref_re.sub(descape_charref, string)
-                            
 
 def fixItem(item, sourceurl, channel = {}):
     # add guid if needed

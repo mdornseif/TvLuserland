@@ -15,6 +15,7 @@
             </object>
         </object>
         <object class="sizeritem">
+            <option>1</option>
             <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
             <border>10</border>
             <object class="wxFlexGridSizer">
@@ -23,9 +24,25 @@
                 <vgap>0</vgap>
                 <hgap>0</hgap>
                 <growablecols>1</growablecols>
-                <growablerows>2</growablerows>
-                <object class="sizeritem">
+                <growablerows>3</growablerows>
+                <object class="spacer">
                     <flag>wxALIGN_CENTRE|wxALL</flag>
+                    <border>5</border>
+                        <size>10,10</size>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+                    <border>10</border>
+                    <object class="wxStaticText" name="ID_SOURCE">
+                        <font>
+                            <size>10</size>
+                            <family>swiss</family>
+                        </font>
+                        <label>source</label>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
                     <border>5</border>
                     <object class="wxStaticText" name="ID_TEXT">
                         <label>Title</label>
@@ -40,7 +57,7 @@
                     </object>
                 </object>
                 <object class="sizeritem">
-                    <flag>wxALIGN_CENTRE|wxALL</flag>
+                    <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
                     <border>5</border>
                     <object class="wxStaticText" name="ID_TEXT">
                         <label>Link</label>
@@ -52,7 +69,8 @@
                     <object class="wxBoxSizer">
                         <orient>wxHORIZONTAL</orient>
                         <object class="sizeritem">
-                            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                            <option>1</option>
+                            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
                             <border>5</border>
                             <object class="wxTextCtrl" name="ID_POSTLINK">
                                 <size>300,-1</size>
@@ -70,7 +88,7 @@
                     </object>
                 </object>
                 <object class="sizeritem">
-                    <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                    <flag>wxALL</flag>
                     <border>5</border>
                     <object class="wxStaticText" name="ID_TEXT">
                         <label>Text</label>
@@ -83,6 +101,35 @@
                         <size>300,-1</size>
                         <style>wxTE_MULTILINE|wxTE_RICH</style>
                         <value></value>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                    <border>5</border>
+                    <object class="wxStaticText" name="ID_TEXT">
+                        <label>Date</label>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL</flag>
+                    <border>5</border>
+                    <object class="wxBoxSizer">
+                        <orient>wxHORIZONTAL</orient>
+                        <object class="sizeritem">
+                            <option>1</option>
+                            <flag>wxALIGN_CENTRE|wxLEFT</flag>
+                            <border>10</border>
+                            <object class="wxStaticText" name="ID_DATE">
+                                <label>unchanged</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTRE|wxALL</flag>
+                            <border>5</border>
+                            <object class="wxButton" name="ID_CHANGEDATE">
+                                <label>Change</label>
+                            </object>
+                        </object>
                     </object>
                 </object>
                 <object class="sizeritem">
@@ -106,7 +153,7 @@
             </object>
         </object>
         <object class="sizeritem">
-            <flag>wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
             <border>10</border>
             <object class="wxBoxSizer">
                 <orient>wxHORIZONTAL</orient>
@@ -129,9 +176,23 @@
                     </object>
                 </object>
                 <object class="spacer">
+                    <option>3</option>
                     <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
                     <border>5</border>
-                        <size>20,20</size>
+                        <size>10,10</size>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxALIGN_CENTRE|wxALL</flag>
+                    <border>5</border>
+                    <object class="wxButton" name="ID_KILL">
+                        <label>KILL</label>
+                    </object>
+                </object>
+                <object class="spacer">
+                    <option>1</option>
+                    <flag>wxALIGN_CENTRE|wxALL</flag>
+                    <border>5</border>
+                        <size>10,10</size>
                 </object>
                 <object class="sizeritem">
                     <flag>wxALIGN_CENTRE|wxALL</flag>
@@ -160,54 +221,55 @@
 
 <object class="wxPanel" name="ReadNewsFunc">
     <object class="wxBoxSizer">
-        <orient>wxHORIZONTAL</orient>
+        <orient>wxVERTICAL</orient>
         <object class="sizeritem">
-            <flag>wxGROW|wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+            <flag>wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL</flag>
             <border>5</border>
             <object class="wxBoxSizer">
-                <orient>wxVERTICAL</orient>
+                <orient>wxHORIZONTAL</orient>
                 <object class="sizeritem">
-                    <flag>wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                    <flag>wxALIGN_CENTRE|wxALL</flag>
                     <border>5</border>
-                    <object class="wxBoxSizer">
-                        <orient>wxHORIZONTAL</orient>
-                        <object class="sizeritem">
-                            <flag>wxALIGN_CENTRE|wxALL</flag>
-                            <border>5</border>
-                            <object class="wxButton" name="ID_SERVICELIST">
-                                <label>Service List</label>
-                            </object>
-                        </object>
-                        <object class="sizeritem">
-                            <flag>wxALIGN_CENTRE|wxALL</flag>
-                            <border>5</border>
-                            <object class="wxButton" name="ID_NEWSERVICE">
-                                <label>New Service</label>
-                            </object>
-                        </object>
-                        <object class="sizeritem">
-                            <flag>wxALIGN_CENTRE|wxALL</flag>
-                            <border>5</border>
-                            <object class="wxButton" name="ID_NEWPOST">
-                                <label>New Post</label>
-                            </object>
-                        </object>
-                        <object class="sizeritem">
-                            <flag>wxALIGN_CENTRE|wxALL</flag>
-                            <border>5</border>
-                            <object class="wxButton" name="ID_REFRESH">
-                                <label>Refresh</label>
-                            </object>
-                        </object>
+                    <object class="wxButton" name="ID_SERVICELIST">
+                        <label>Service List</label>
                     </object>
                 </object>
                 <object class="sizeritem">
                     <flag>wxALIGN_CENTRE|wxALL</flag>
                     <border>5</border>
-                    <object class="unknown" name="ID_NEWSPANE">
-                    <size>500,400</size>
+                    <object class="wxButton" name="ID_NEWSERVICE">
+                        <label>New Service</label>
                     </object>
                 </object>
+                <object class="sizeritem">
+                    <flag>wxALIGN_CENTRE|wxALL</flag>
+                    <border>5</border>
+                    <object class="wxButton" name="ID_NEWPOST">
+                        <label>New Post</label>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxALIGN_CENTRE|wxALL</flag>
+                    <border>5</border>
+                    <object class="wxButton" name="ID_REFRESH">
+                        <label>Refresh</label>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxALIGN_CENTRE|wxALL</flag>
+                    <border>5</border>
+                    <object class="wxButton" name="ID_KILLALL">
+                        <label>Kill All</label>
+                    </object>
+                </object>
+            </object>
+        </object>
+        <object class="sizeritem">
+            <option>1</option>
+            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <border>5</border>
+            <object class="unknown" name="ID_NEWSPANE">
+            <size>500,400</size>
             </object>
         </object>
     </object>
@@ -215,82 +277,77 @@
 
 <object class="wxPanel" name="NewsItemFunc">
     <object class="wxBoxSizer">
-        <orient>wxHORIZONTAL</orient>
+        <orient>wxVERTICAL</orient>
         <object class="sizeritem">
-            <flag>wxALIGN_CENTRE|wxALL</flag>
-            <border>5</border>
-            <object class="wxBoxSizer">
-                <orient>wxVERTICAL</orient>
+            <flag>wxGROW|wxALIGN_CENTER_HORIZONTAL|wxLEFT</flag>
+            <border>10</border>
+            <object class="wxFlexGridSizer">
+                <cols>2</cols>
+                <rows>0</rows>
+                <vgap>0</vgap>
+                <hgap>0</hgap>
+                <growablecols>0</growablecols>
                 <object class="sizeritem">
-                    <flag>wxGROW|wxALIGN_CENTER_HORIZONTAL|wxLEFT</flag>
-                    <border>10</border>
-                    <object class="wxFlexGridSizer">
-                        <cols>2</cols>
-                        <rows>0</rows>
-                        <vgap>0</vgap>
-                        <hgap>0</hgap>
-                        <growablecols>1</growablecols>
-                        <object class="sizeritem">
-                            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                            <object class="wxStaticText" name="ID_TITLE">
-                                <font>
-                                    <size>16</size>
-                                    <weight>bold</weight>
-                                    <family>swiss</family>
-                                </font>
-                                <label>-unset-</label>
-                            </object>
-                        </object>
-                        <object class="sizeritem">
-                            <flag>wxALIGN_RIGHT</flag>
-                            <border>5</border>
-                            <object class="wxStaticText" name="ID_SOURCE">
-                                <style>wxALIGN_RIGHT</style>
-                                <font>
-                                    <size>10</size>
-                                    <family>swiss</family>
-                                </font>
-                                <label>source</label>
-                            </object>
-                        </object>
-                        <object class="sizeritem">
-                            <flag>wxALIGN_CENTER_VERTICAL</flag>
-                            <border>5</border>
-                            <object class="wxStaticText" name="ID_LINK">
-                                <label>-unset-</label>
-                            </object>
-                        </object>
+                    <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                    <object class="wxStaticText" name="ID_TITLE">
+                        <font>
+                            <size>16</size>
+                            <weight>bold</weight>
+                            <family>swiss</family>
+                        </font>
+                        <label>-unset-</label>
                     </object>
                 </object>
                 <object class="sizeritem">
-                    <flag>wxALIGN_CENTRE|wxALL</flag>
+                    <flag>wxALIGN_RIGHT|wxRIGHT</flag>
+                    <border>10</border>
+                    <object class="wxStaticText" name="ID_SOURCE">
+                        <style>wxALIGN_RIGHT</style>
+                        <font>
+                            <size>10</size>
+                            <family>swiss</family>
+                        </font>
+                        <label>source</label>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxALIGN_CENTER_VERTICAL</flag>
+                    <border>5</border>
+                    <object class="wxStaticText" name="ID_LINK">
+                        <label>-unset-</label>
+                    </object>
+                </object>
+            </object>
+        </object>
+        <object class="sizeritem">
+            <option>1</option>
+            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <object class="wxBoxSizer">
+                <orient>wxHORIZONTAL</orient>
+                <object class="sizeritem">
+                    <option>1</option>
+                    <flag>wxGROW|wxALIGN_CENTER_HORIZONTAL</flag>
+                    <border>15</border>
+                    <object class="unknown" name="ID_HTML">
+                    <size>300,100</size>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
                     <object class="wxBoxSizer">
-                        <orient>wxHORIZONTAL</orient>
+                        <orient>wxVERTICAL</orient>
                         <object class="sizeritem">
-                            <flag>wxGROW|wxALIGN_CENTER_HORIZONTAL</flag>
-                            <border>15</border>
-                            <object class="unknown" name="ID_HTML">
-                            <size>300,100</size>
+                            <flag>wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+                            <border>5</border>
+                            <object class="wxButton" name="ID_KILL">
+                                <label>Kill</label>
                             </object>
                         </object>
                         <object class="sizeritem">
-                            <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
-                            <object class="wxBoxSizer">
-                                <orient>wxVERTICAL</orient>
-                                <object class="sizeritem">
-                                    <flag>wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxButton" name="ID_KILL">
-                                        <label>Kill</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxButton" name="ID_EDIT">
-                                        <label>Edit</label>
-                                    </object>
-                                </object>
+                            <flag>wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxButton" name="ID_EDIT">
+                                <label>Edit</label>
                             </object>
                         </object>
                     </object>
@@ -842,137 +899,132 @@
             <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
             <border>5</border>
             <object class="wxStaticBoxSizer">
-                <orient>wxVERTICAL</orient>
+                <orient>wxHORIZONTAL</orient>
                 <label>Information about Aggregation</label>
                 <object class="sizeritem">
-                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                    <option>1</option>
+                    <flag>wxALL</flag>
                     <border>5</border>
-                    <object class="wxBoxSizer">
-                        <orient>wxHORIZONTAL</orient>
+                    <object class="wxFlexGridSizer">
+                        <cols>2</cols>
+                        <rows>0</rows>
+                        <vgap>0</vgap>
+                        <hgap>0</hgap>
                         <object class="sizeritem">
-                            <flag>wxALL</flag>
+                            <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
                             <border>5</border>
-                            <object class="wxFlexGridSizer">
-                                <cols>2</cols>
-                                <rows>0</rows>
-                                <vgap>0</vgap>
-                                <hgap>0</hgap>
-                                <object class="sizeritem">
-                                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_TEXT">
-                                        <label>Last Request</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_LASTREQUEST">
-                                        <label>-unset-</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_TEXT">
-                                        <label>Last new Item</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_LASTNEWITEM">
-                                        <label>-unset-</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_TEXT">
-                                        <label>Items fetched</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_ITEMSFETCHED">
-                                        <label>-unset-</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_TEXT">
-                                        <label>Unread Items</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_UNREADITEMS">
-                                        <label>-unset-</label>
-                                    </object>
-                                </object>
+                            <object class="wxStaticText" name="ID_TEXT">
+                                <label>Last Request</label>
                             </object>
                         </object>
                         <object class="sizeritem">
-                            <flag>wxGROW|wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
                             <border>5</border>
-                            <object class="wxStaticLine" name="ID_LINE">
-                                <size>-1,20</size>
-                                <style>wxLI_VERTICAL</style>
+                            <object class="wxStaticText" name="ID_LASTREQUEST">
+                                <label>-unset-</label>
                             </object>
                         </object>
                         <object class="sizeritem">
-                            <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                            <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
                             <border>5</border>
-                            <object class="wxFlexGridSizer">
-                                <cols>2</cols>
-                                <rows>0</rows>
-                                <vgap>0</vgap>
-                                <hgap>0</hgap>
-                                <object class="sizeritem">
-                                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_TEXT">
-                                        <label>Errors</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_ERRORS">
-                                        <label>-unset-</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_TEXT">
-                                        <label>Last Error</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_LASTERROR">
-                                        <label>-unset-</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_TEXT">
-                                        <label>Last Error Text</label>
-                                    </object>
-                                </object>
-                                <object class="sizeritem">
-                                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
-                                    <border>5</border>
-                                    <object class="wxStaticText" name="ID_LASTERRORTEXT">
-                                        <label>-unset-</label>
-                                    </object>
-                                </object>
+                            <object class="wxStaticText" name="ID_TEXT">
+                                <label>Last new Item</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_LASTNEWITEM">
+                                <label>-unset-</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_TEXT">
+                                <label>Items fetched</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_ITEMSFETCHED">
+                                <label>-unset-</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_TEXT">
+                                <label>Unread Items</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_UNREADITEMS">
+                                <label>-unset-</label>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                    <border>5</border>
+                    <object class="wxStaticLine" name="ID_LINE">
+                        <size>-1,20</size>
+                        <style>wxLI_VERTICAL</style>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <option>1</option>
+                    <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+                    <border>5</border>
+                    <object class="wxFlexGridSizer">
+                        <cols>2</cols>
+                        <rows>0</rows>
+                        <vgap>0</vgap>
+                        <hgap>0</hgap>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_TEXT">
+                                <label>Errors</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_ERRORS">
+                                <label>-unset-</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_TEXT">
+                                <label>Last Error</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_LASTERROR">
+                                <label>-unset-</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_TEXT">
+                                <label>Last Error Text</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_LASTERRORTEXT">
+                                <label>-unset-</label>
                             </object>
                         </object>
                     </object>
@@ -980,19 +1032,21 @@
             </object>
         </object>
         <object class="sizeritem">
+            <option>2</option>
             <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
             <border>5</border>
             <object class="wxStaticBoxSizer">
                 <orient>wxVERTICAL</orient>
                 <label>Information provided by the Service</label>
                 <object class="sizeritem">
-                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
                     <border>5</border>
                     <object class="wxFlexGridSizer">
                         <cols>2</cols>
                         <rows>0</rows>
                         <vgap>0</vgap>
                         <hgap>0</hgap>
+                        <growablecols>1</growablecols>
                         <object class="sizeritem">
                             <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
                             <border>5</border>
@@ -1024,6 +1078,7 @@
                     </object>
                 </object>
                 <object class="sizeritem">
+                    <option>3</option>
                     <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
                     <border>5</border>
                     <object class="wxTextCtrl" name="ID_CHANNELINFO">
@@ -1050,6 +1105,7 @@
                 <rows>0</rows>
                 <vgap>0</vgap>
                 <hgap>0</hgap>
+                <growablecols>1</growablecols>
                 <object class="sizeritem">
                     <flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
                     <border>5</border>
@@ -1173,10 +1229,11 @@
             </object>
         </object>
         <object class="sizeritem">
+            <option>1</option>
             <flag>wxALIGN_CENTRE|wxALL</flag>
             <border>5</border>
             <object class="wxBoxSizer">
-                <orient>wxHORIZONTAL</orient>
+                <orient>wxVERTICAL</orient>
                 <object class="sizeritem">
                     <flag>wxALIGN_CENTRE|wxALL</flag>
                     <border>5</border>
@@ -1195,7 +1252,7 @@
             </object>
         </object>
         <object class="sizeritem">
-            <flag>wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+            <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
             <border>5</border>
             <object class="wxBoxSizer">
                 <orient>wxHORIZONTAL</orient>
@@ -1207,6 +1264,7 @@
                     </object>
                 </object>
                 <object class="spacer">
+                    <option>1</option>
                     <flag>wxALIGN_CENTRE|wxALL</flag>
                     <border>5</border>
                         <size>20,20</size>

@@ -1,8 +1,14 @@
-* Umlauts and Friends are masked
-* Service Editor is now fully functional
+Sat Nov  9 09:31:29 CET 2002
+* Debug Menu - use with care
+* Scrollbar on Newspanel resizes correctly now - but is slow
+* Most Dialogs are somewhat resizable now
+* Kill All Button on Newspanel
+* Unsubscribing Services now works
+* Ümlauts and Friends are masked
+* Service Editor is now more functional
 * News Pane now Shows items with a clickable link, link and title are not
   rendered anymore as HTML
-
+* NewEditor is in the process of getting more Features, e.g. a Kill Button
 
 Tue Nov  5 00:00:12 CET 2002
 

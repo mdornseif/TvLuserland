@@ -1,10 +1,10 @@
 * neue items zum pane hinzufügen
 * items später rendern
 * deleted item DB
+* deleteallitemsfromsource() wenn keine items vorhanden sind -> exception
 * postings per service merken
 * Hand Icon when over a wxLinkText
 * Newsreader View
-* Resizing
 * Bei Newfeeds die Möglichkeit geben mehrere feeds gleichzeitig zu subscriben
 * Asyncrones Posten
 * bsddb recovery
@@ -16,7 +16,6 @@
 * Urls in Statusbar
 * RSS aus der GUI holen
 * Cut-und-Paste aus preview
-* PyCrust
 * Dupprobleme / BSDDUPDEB
 * undelete
 * Vom Newspane aus posten.
@@ -25,14 +24,15 @@
 * "MIG: server died : CGSExtractEventRecordsFromMessage" errors
 * fensterliste
 * content:encoded
+* content:encoding
 * ETAGs
-* Ampheta / Radio One click subscription: http://127.0.0.1:8888/index.html?add_url=http%3A%2F%2Fwww.newsisfree.com%2FHPE%2Fxml%2Ffeeds%2F10%2F4110.xml http://127.0.0.1:5335/system/pages/subscriptions?url=http%3A%2F%2Fwww.newsisfree.com%2FHPE%2Fxml%2Ffeeds%2F10%2F4110.xml http://127.0.0.1:8900/add_provider?url=http%3A%2F%2Fwww.newsisfree.com%2FHPE%2Fxml%2Ffeeds%2F10%2F4110.xml
+* Blogger 
 * Drag'n Drop - http://ranchero.com/software/netnewswire/rssclipboard.php
 * tree
 * wxLinkText schluckt Sonderzeichen, wie '&'
-* content:encoding
 * XML redirection http://radio.userland.com/howtoRedirectRss
-* Removing Feeds is to slow
+* Position neuer Fenster
+* chaching
 
 Done
 * URL-Redirection auflösen
@@ -43,3 +43,9 @@ Done
 * Feeds hinzufühen
 * "Open in Browser"
 * Umlaute maskieren
+* Ampheta http://127.0.0.1:8888/index.html?add_url=http%3A%2F%2Fwww.newsisfree.com%2FHPE%2Fxml%2Ffeeds%2F10%2F4110.xml 
+* Radio One click subscription: http://127.0.0.1:5335/system/pages/subscriptions?url=http%3A%2F%2Fwww.newsisfree.com%2FHPE%2Fxml%2Ffeeds%2F10%2F4110.xml 
+* Headline Viewer: http://127.0.0.1:8900/add_provider?url=http%3A%2F%2Fwww.newsisfree.com%2FHPE%2Fxml%2Ffeeds%2F10%2F4110.xml
+* Resizing
+* PyCrust
+* Removing Feeds is to slow

@@ -6,7 +6,7 @@
 # Copyright:    nope
 #----------------------------------------------------------------------------
 
-__rcsid__ = "$Id: TvLuserland.py,v 1.5 2002/11/04 22:40:28 drt Exp $"
+__rcsid__ = "$Id: TvLuserland.py,v 1.6 2002/11/09 08:34:26 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
@@ -35,44 +35,34 @@ class TvMainFrame(wxFrame):
 
         self.CreateMyMenuBar()
         
-        self.CreateMyToolBar()
+        #self.CreateMyToolBar()
         
-        self.CreateStatusBar(1)
-        self.SetStatusText("Starting")
+        self.CreateStatusBar(3)
+        self.SetStatusText("Starting", 2)
         
         self.newspane = TvNewsPane(self)
-
-        # insert main window here
+        # use newspane and add some candy
         ReadNewsFunc(self)
 
-        # examples
-        #t = self.GetServicetree()
-        #r = t.AddRoot("Root")
-        #t.SetPyData(r, None)
-        #c = t.AppendItem(r, "Alle Services")
-        #t.SetPyData(c, None)
-        #c = t.AppendItem(r, "Services nach Name")
-        #t.SetPyData(c, None)
-        #c = t.AppendItem(r, "Services nach URL")
-        #t.SetPyData(c, None)
-        #for x in tv.aggregator.db.services.getsubscriptions():
-        #    t.AppendItem(c, x)
-        #c = t.AppendItem(r, "Sonstwas")
-        #t.SetPyData(c, None)
-
         # WDR: handler declarations for TvMainFrame
+        EVT_MENU(self, ID_INSPECTOR, self.OnInspector)
+        EVT_BUTTON(self, ID_KILLALL, self.OnKillall)
         EVT_BUTTON(self, ID_NEWSERVICE, self.OnNewservice)
         EVT_BUTTON(self, ID_SERVICELIST, self.OnServicelist)
         EVT_BUTTON(self, ID_REFRESH, self.OnRefresh)
         EVT_BUTTON(self, ID_NEWPOST, self.OnNewpost)
         EVT_MENU(self, wxID_ABOUT, self.OnAbout)
         EVT_MENU(self, ID_PREFERENCES, self.OnPreferences)
+        EVT_MENU(self, ID_SHELL, self.OnShell)
         EVT_MENU(self, ID_QUIT, self.OnQuit)
         EVT_CLOSE(self, self.OnCloseWindow)
         
 
     # WDR: methods for TvMainFrame
     
+    def GetKillall(self):
+        return wxPyTypeCast( self.FindWindowById(ID_KILLALL), "wxButton" )
+
     def GetServicelist(self):
         return wxPyTypeCast( self.FindWindowById(ID_SERVICELIST), "wxButton" )
 
@@ -82,40 +72,39 @@ class TvMainFrame(wxFrame):
     def GetItemscroller(self):
         return wxPyTypeCast( self.FindWindowById(ID_NEWSPANE), "wxScrolledWindow" )
 
-    def GetServicetree(self):
-        window = self.FindWindowById(ID_SERVICETREE)
-        if hasattr(window, "this"):
-            newPtr = ptrcast(window.this, "wxPyTreeCtrl_p")
-        else:
-            newPtr = ptrcast(window, "wxPyTreeCtrl_p")
-        theClass = globals()["wxTreeCtrlPtr"]
-        theObj = theClass(newPtr)
-        if hasattr(window, "this"):
-            theObj.thisown = window.thisown
-        return theObj
 
     def CreateMyMenuBar(self):
-        file_menu = wxMenu()
-        help_menu = wxMenu()
-        help_menu.Append(wxID_ABOUT, "About...", "Program info")
-        file_menu.Append(ID_PREFERENCES, "Preferences", "Preferences and Configuration")
-        file_menu.Append(ID_QUIT, "Quit...", "Quit program")
-        
-        menu_bar = wxMenuBar()
-        menu_bar.Append(file_menu, "File")
+        self.SetMenuBar( MenuBarFunc() )
+        #file_menu = wxMenu()
+        #help_menu = wxMenu()
+        #help_menu.Append(wxID_ABOUT, "About...", "Program info")
+        #file_menu.Append(ID_PREFERENCES, "Preferences", "Preferences and Configuration")
+        #file_menu.Append(ID_SHELL, "Debug")
+        #file_menu.Append(ID_QUIT, "Quit...", "Quit program")     
+        #menu_bar = wxMenuBar()
+        #menu_bar.Append(file_menu, "File")
         #menu_bar.Append(help_menu, "&Help")
-        
-        self.SetMenuBar(menu_bar)
+        #self.SetMenuBar(menu_bar)
     
     def CreateMyToolBar(self):
         tb = self.CreateToolBar(wxTB_HORIZONTAL|wxNO_BORDER)
-        
-        # tb.AddSimpleTool( ID_QUIT, wxNoRefBitmap(...,wxBITMAP_TYPE_PNG), "Quit" )
-        
-        tb.Realize()
+        MyToolBarFunc( tb )
+
     
     # WDR: handler implementations for TvMainFrame
     
+
+    def OnKillall(self, event):
+        dlg = wxMessageDialog(self, 'Should I really delete all this items?',
+                              'Deleting all shown items', wxYES_NO | wxICON_QUESTION)
+        #wxYES_NO | wxNO_DEFAULT | wxCANCEL | wxICON_INFORMATION)
+        print dlg.ShowModal(), wxID_YES, wxNO
+        #if dlg.ShowModal() == wxID_YES:
+        #print "yupp"
+        dlg.Destroy()
+        #self.newspane.removeAllItems()
+
+
     def OnNewservice(self, event):
         import TvNewService
         TvNewService.NewService(self)
@@ -135,6 +124,14 @@ class TvMainFrame(wxFrame):
         # user is requesting new posting form
         dialog = EditPostDialog(self, -1)
         dialog.Show()
+
+    def OnInspector(self, event):
+        import TvDebug
+        TvDebug.InspectorFrame(self, app).Show()        
+
+    def OnShell(self, event):
+        import TvDebug
+        TvDebug.ShellFrame(self, app).Show()
         
     def OnPreferences(self, event):
         import TvConfig 
@@ -144,18 +141,18 @@ class TvMainFrame(wxFrame):
         dialog.Destroy()
 
     def OnAbout(self, event):
-        dialog = wxMessageDialog(self, "This is TV Luserland - work in Progress\nhackers@c0re.jp",
-            "About TV Luserland", wxOK|wxICON_INFORMATION )
+        dialog = wxMessageDialog(self, "This is TV Luserland - work in Progress\nhackers@c0re.jp\nSee http://c0re.jp/c0de/snap/",
+                                 "About TV Luserland", wxOK|wxICON_INFORMATION )
         dialog.CentreOnParent()
         dialog.ShowModal()
         dialog.Destroy()
-    
+
     def OnQuit(self, event):
         self.Close(true)
-    
+
     def OnCloseWindow(self, event):
         self.Destroy()
-
+                                    
 
 #----------------------------------------------------------------------------
 

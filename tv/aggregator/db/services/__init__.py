@@ -8,7 +8,7 @@ reading rss files from the network, 'config' is only to be written by the GUI.
 
 """
 
-__rcsid__ = "$Id: __init__.py,v 1.5 2002/11/04 22:43:55 drt Exp $"
+__rcsid__ = "$Id: __init__.py,v 1.6 2002/11/09 08:34:27 drt Exp $"
 
 # Try using cPickle and cStringIO if available.
 try:
@@ -48,6 +48,7 @@ def init():
 
 
 def close():
+    savesubscriptions(getsubscriptions())
     _servicedb.close()
 
 
@@ -114,6 +115,7 @@ def saveconfig(sourceurl, config):
 feedinfo_cachetime = 0
 feedinfo_cache = None
 
+# XXX: We should generate a cache here to get rid of the fastsave hack
 def getsubscriptions():
     ret = []
     try:
@@ -153,6 +155,25 @@ def savesubscriptions(subscriptions):
     fd.close()
     print "done", time.time()
 
+def fastsavesubscriptions(subscriptions):
+    print "generating", time.time()
+    feedinfo_cache = subscriptions
+    feedinfo_cacchetime = time.time()
+    outlines = []
+    for x in subscriptions:
+          outlines.append('<outline xmlUrl="%s" />' % (x.replace("&", "&amp;")))
+
+    print "saving", time.time()
+    fd = open(os.path.join(tv.config.get("fs.dbdir"), "subscriptions.opml"), 'w')
+    fd.write('''<opml version="1.0">
+<body>
+%s
+</body>
+</opml>
+''' % "\n".join(outlines))
+    fd.close()
+    print "done", time.time()
+
 def issubscribed(serviceurl):
     return serviceurl in getsubscriptions()
                                
@@ -161,7 +182,9 @@ def subscribe(serviceurl):
     subscriptions = getsubscriptions()
     if serviceurl not in subscriptions:
         subscriptions.append(serviceurl)
-        savesubscriptions(subscriptions)
+        fastsavesubscriptions(subscriptions)
+        return 1
+    return None
 
 def unsubscribe(serviceurl):
     subscriptions = getsubscriptions()
@@ -172,6 +195,6 @@ def unsubscribe(serviceurl):
         for x in subscriptions:
             if x != serviceurl:
                 newsub.append(x)
-        savesubscriptions(subscriptions)
+        fastsavesubscriptions(newsub)
 
 init()

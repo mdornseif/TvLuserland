@@ -105,13 +105,29 @@ class EditPostDialog(wxDialog):
         DialogElements.SetSizeHints(self) 
 
         # WDR: handler declarations for EditPost
+        EVT_BUTTON(self, ID_SOURCE, self.OnSource)
+        EVT_BUTTON(self, ID_CHANGEDATE, self.OnChangedate)
         EVT_BUTTON(self, ID_BROWSE, self.OnBrowse)
+        EVT_BUTTON(self, ID_KILL, self.OnKill)
         EVT_BUTTON(self, wxID_POST, self.OnPost)
         EVT_SIZE(self, self.OnSize)
         EVT_ASYNCFUNC_DONE(self, self.OnAsyncFuncDone)
         
 
     # WDR: methods for EditPost
+
+    def GetKill(self):
+        return wxPyTypeCast( self.FindWindowById(ID_KILL), "wxButton" )
+
+    def GetDate(self):
+        return wxPyTypeCast( self.FindWindowById(ID_DATE), "wxStaticText" )
+
+    def GetChangedate(self):
+        return wxPyTypeCast( self.FindWindowById(ID_CHANGEDATE), "wxButton" )
+
+    def GetSource(self):
+        return self.FindWindowById(ID_SOURCE)
+        #return wxPyTypeCast( self.FindWindowById(ID_SOURCE), "wxStaticText" )
 
     def GetBrowse(self):
         return wxPyTypeCast( self.FindWindowById(ID_BROWSE), "wxButton" )
@@ -133,9 +149,21 @@ class EditPostDialog(wxDialog):
 
     # WDR: handler implementations for EditPost
 
+    def OnSource(self, event):
+        pass
+
+    def OnChangedate(self, event):
+        pass
+
     def OnBrowse(self, event):
         import webbrowser
         webbrowser.open(self.GetPostlink().GetValue())
+
+    def OnKill(self, event):
+        self.Show(FALSE)
+        self.Destroy()
+        if self.killfunc:
+            self.killfunc()
 
     def OnBeforeNavigate2(self, evt):
         self.logEvt('OnBeforeNavigate2', evt)
@@ -205,6 +233,7 @@ class EditPostDialog(wxDialog):
         info.SetLabel("Done")
 
         self.Show(FALSE)
+        self.Destroy()
 
         # delete posting
         # XXX: Test if user want'S killing after posting.
