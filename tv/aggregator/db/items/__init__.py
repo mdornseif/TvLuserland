@@ -1,5 +1,7 @@
 # Try using cPickle and cStringIO if available.
 
+__rcsid__ = "$Id: __init__.py,v 1.4 2002/11/04 22:43:00 drt Exp $"
+
 try:
     from cPickle import load, dump, loads, dumps
 except ImportError:
@@ -170,7 +172,10 @@ def getnrofunreaditems():
 def getnrofunreaditemsforsource(sourceurl):
     ret = 0
     cur = _itembysourcedb.cursor()
-    rec = cur.set(sourceurl)
+    try:
+        rec = cur.set(sourceurl)
+    except db.DBNotFoundError:
+        rec = None
     while rec:
         ret += 1
         rec = cur.next_dup()
