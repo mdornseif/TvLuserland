@@ -1,4 +1,4 @@
-__rcsid__ = "$Id: TvNewsPane.py,v 1.7 2002/11/09 08:34:27 drt Exp $"
+__rcsid__ = "$Id: TvNewsPane.py,v 1.8 2002/11/09 20:29:35 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
@@ -106,14 +106,16 @@ class NewsItem(wxPanel):
         wdr = NewsItemFunc( self, true )
         self.SetLabelAndResize(self.GetTitle(), item.get("title", ""))
         self.GetLink().SetLabel(item.get("link", ""))
+        self.SetLabelAndResize(self.GetDate(), str(item.get("TVdateobject", ""))[:-3])
         self.GetSource().SetLabel(tv.aggregator.db.services.getconfig(item["TVsourceurl"]).get("privatename", ""))
  
         # WDR: handler declarations for NewsItem
+        EVT_BUTTON(self, ID_SOURCE, self.OnSource)
         EVT_BUTTON(self, ID_EDIT, self.OnEdit)
         #EVT_BUTTON(self, ID_POST, self.OnPost)
         EVT_BUTTON(self, ID_KILL, self.OnKill)
         EVT_BUTTON(self, ID_SOURCE, self.OnSource)
-        EVT_LEFT_UP(self.GetSource(), self.OnSource)
+        #EVT_LEFT_UP(self.GetSource(), self.OnSource)
         EVT_SIZE(self, self.OnSize)
 
     def SetLabelAndResize(self, control, label):
@@ -126,6 +128,9 @@ class NewsItem(wxPanel):
 
     
     # WDR: methods for NewsItem
+
+    def GetDate(self):
+        return wxPyTypeCast( self.FindWindowById(ID_DATE), "wxStaticText" )
 
     def GetLink(self):
         return self.FindWindowById(ID_LINK)

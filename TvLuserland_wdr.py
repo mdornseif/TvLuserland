@@ -21,8 +21,8 @@ ID_POSTTEXT = 10005
 ID_DATE = 10006
 ID_CHANGEDATE = 10007
 ID_TEX = 10008
-ID_POSTINGTEXT = 10009
-ID_POSTINGGAUGE = 10010
+ID_POSTINGGAUGE = 10009
+ID_POSTINGTEXT = 10010
 ID_KILL = 10011
 wxID_POST = 10012
 
@@ -58,7 +58,7 @@ def EditPostFunc( parent, call_fit = true, set_sizer = true ):
     item8 = wxTextCtrl( parent, ID_POSTLINK, "", wxDefaultPosition, wxSize(300,-1), 0 )
     item7.AddWindow( item8, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
-    item9 = wxButton( parent, ID_BROWSE, "GO", wxDefaultPosition, wxSize(40,-1), 0 )
+    item9 = wxButton( parent, ID_BROWSE, "Go", wxDefaultPosition, wxSize(40,-1), 0 )
     item7.AddWindow( item9, 0, wxALIGN_CENTRE|wxALL, 5 )
 
     item2.AddSizer( item7, 0, wxGROW|wxALIGN_CENTER_VERTICAL, 5 )
@@ -98,11 +98,11 @@ def EditPostFunc( parent, call_fit = true, set_sizer = true ):
 
     item18 = wxBoxSizer( wxHORIZONTAL )
     
-    item19 = wxStaticText( parent, ID_POSTINGTEXT, "", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT )
+    item19 = wxGauge( parent, ID_POSTINGGAUGE, 100, wxDefaultPosition, wxSize(100,-1), 0 )
+    item19.Enable(false)
     item18.AddWindow( item19, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item20 = wxGauge( parent, ID_POSTINGGAUGE, 100, wxDefaultPosition, wxSize(100,-1), 0 )
-    item20.Enable(false)
+    item20 = wxStaticText( parent, ID_POSTINGTEXT, "", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT )
     item18.AddWindow( item20, 0, wxALIGN_CENTRE|wxALL, 5 )
 
     item18.AddSpacer( 10, 10, 3, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 )
@@ -181,39 +181,49 @@ ID_EDIT = 10022
 def NewsItemFunc( parent, call_fit = true, set_sizer = true ):
     item0 = wxBoxSizer( wxVERTICAL )
     
-    item1 = wxFlexGridSizer( 0, 2, 0, 0 )
-    item1.AddGrowableCol( 0 )
+    item1 = wxBoxSizer( wxHORIZONTAL )
     
     item2 = wxStaticText( parent, ID_TITLE, "-unset-", wxDefaultPosition, wxDefaultSize, 0 )
     item2.SetFont( wxFont( 16, wxSWISS, wxNORMAL, wxBOLD ) )
     item1.AddWindow( item2, 0, wxALIGN_CENTER_VERTICAL|wxALL, 0 )
 
+    item1.AddSpacer( 10, 10, 1, wxALIGN_CENTRE|wxALL, 5 )
+
     item3 = wxClickableText( parent, ID_SOURCE, "source", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT )
     item3.SetFont( wxFont( 10, wxSWISS, wxNORMAL, wxNORMAL ) )
-    item1.AddWindow( item3, 0, wxALIGN_RIGHT|wxRIGHT, 10 )
-
-    item4 = wxLinkText( parent, ID_LINK, "-unset-", wxDefaultPosition, wxDefaultSize, 0 )
-    item1.AddWindow( item4, 0, wxALIGN_CENTER_VERTICAL, 5 )
+    item1.AddWindow( item3, 0, wxALIGN_RIGHT|wxALIGN_BOTTOM|wxRIGHT, 10 )
 
     item0.AddSizer( item1, 0, wxGROW|wxALIGN_CENTER_HORIZONTAL|wxLEFT, 10 )
 
-    item5 = wxBoxSizer( wxHORIZONTAL )
-    parent.itemsizer = item5
+    item4 = wxBoxSizer( wxHORIZONTAL )
     
-    item6 = parent.html
-    item5.AddWindow( item6, 1, wxGROW|wxALIGN_CENTER_HORIZONTAL, 15 )
+    item5 = wxLinkText( parent, ID_LINK, "-unset-", wxDefaultPosition, wxDefaultSize, 0 )
+    item4.AddWindow( item5, 0, wxALIGN_CENTER_VERTICAL, 0 )
 
-    item7 = wxBoxSizer( wxVERTICAL )
+    item4.AddSpacer( 10, 10, 1, wxALIGN_CENTRE|wxALL, 5 )
+
+    item6 = wxStaticText( parent, ID_DATE, "-unset-", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT )
+    item4.AddWindow( item6, 0, wxALIGN_CENTRE|wxRIGHT, 10 )
+
+    item0.AddSizer( item4, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT, 10 )
+
+    item7 = wxBoxSizer( wxHORIZONTAL )
+    parent.itemsizer = item7
     
-    item8 = wxButton( parent, ID_KILL, "Kill", wxDefaultPosition, wxDefaultSize, 0 )
-    item7.AddWindow( item8, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 5 )
+    item8 = parent.html
+    item7.AddWindow( item8, 1, wxGROW|wxALIGN_CENTER_HORIZONTAL, 15 )
 
-    item9 = wxButton( parent, ID_EDIT, "Edit", wxDefaultPosition, wxDefaultSize, 0 )
-    item7.AddWindow( item9, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+    item9 = wxBoxSizer( wxVERTICAL )
+    
+    item10 = wxButton( parent, ID_KILL, "Kill", wxDefaultPosition, wxDefaultSize, 0 )
+    item9.AddWindow( item10, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
-    item5.AddSizer( item7, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 0 )
+    item11 = wxButton( parent, ID_EDIT, "Edit", wxDefaultPosition, wxDefaultSize, 0 )
+    item9.AddWindow( item11, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
-    item0.AddSizer( item5, 1, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 0 )
+    item7.AddSizer( item9, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 0 )
+
+    item0.AddSizer( item7, 1, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 0 )
 
     if set_sizer == true:
         parent.SetAutoLayout( true )
