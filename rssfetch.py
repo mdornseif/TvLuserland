@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 
-__rcsid__ = "$Id: rssfetch.py,v 1.2 2002/10/31 22:35:09 drt Exp $"
+__rcsid__ = "$Id: rssfetch.py,v 1.3 2002/11/01 08:55:10 drt Exp $"
 
 import rssparser
 import random
@@ -335,6 +335,9 @@ if __name__ == '__main__':
     else:
         urls = URLS
     from pprint import pprint
+
+    urls = tv.aggregator.db.services.getsubscriptions()
+
     for url in urls:
         print url
         service = tv.aggregator.db.services.getfeedinfo(url)

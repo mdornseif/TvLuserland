@@ -21,13 +21,18 @@ except ImportError:
     from StringIO import StringIO
 
                                 
-import os.path, atexit
+import os, os.path
+import atexit
 import threading
+import cgi
+import time
 from bsddb3 import db
 import mx.DateTime
 
 import tv.config
 from tv.aggregator.db import _dbenv
+
+from tv.thirdparty import opml_parser
 
 def init():
     global _servicedb
@@ -67,6 +72,7 @@ def getservice(sourceurl):
                 "config": {}}
 
 
+
 def getfeedinfo(sourceurl):
     return getservice(sourceurl)["feedinfo"]
 
@@ -92,5 +98,63 @@ def saveconfig(sourceurl, config):
     saveservice({"feedinfo": getfeedinfo(sourceurl), "config": config})
     writelock.release()
 
+feedinfo_cachetime = 0
+feedinfo_cache = None
+
+def getsubscriptions():
+    
+    ret = []
+    try:
+        if os.stat(os.path.join(tv.config.get("fs.dbdir"), "subscriptions.opml")).st_mtime < feedinfo_cachetime:
+            ret = feedinfio_cache
+        else:
+            for x in opml_parser.load(os.path.join(tv.config.get("fs.dbdir"), "subscriptions.opml")):
+                ret.append(x[1])
+                feedinfo_cache = ret
+            feedinfo_cacchetime = time.time()
+    except IOError:
+        pass
+    return ret
+
+def savesubscriptions(subscriptions):
+    feedinfo_cache = subscriptions
+    feedinfo_cacchetime = time.time()
+    outlines = []
+    for x in subscriptions:
+        y = getservice(x)
+        config = y["config"]
+        feedinfo = y["feedinfo"]
+        title = config.get("publicname", feedinfo.get("title", "Unfnown title for: %s" % x))
+        outlines.append('<outline title="%s" xmlUrl="%s" />' % (title.replace("&", "&amp;"), x.replace("&", "&amp;")))
+
+    fd = open(os.path.join(tv.config.get("fs.dbdir"), "subscriptions.opml"), 'w')
+    fd.write('''<opml version="1.0">
+<body>
+%s
+</body>
+</opml>
+''' % "\n".join(outlines))
+    fd.close()
+
+def issubscribed(serviceurl):
+    return serviceurl in opml_parser.load(os.path.join(tv.config.get("fs.dbdir"), "services.opml"))
+                               
+
+def subscribe(serviceurl):
+    subscriptions = getsubscriptions()
+    if serviceurl not in subscriptions:
+        subscriptions.append(serviceurl)
+        savesubscriptions(subscriptions)
+
+def unsubscribe(serviceurl):
+    subscriptions = getsubscriptions()
+    if serviceurl not in subscriptions:
+        return None
+    else:
+        newsub = []
+        for x in subscriptions:
+            if x != serviceurl:
+                newsub.append(x)
+        savesubscriptions(subscriptions)
 
 init()

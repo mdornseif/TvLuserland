@@ -1,4 +1,4 @@
-__rcsid__ = "$Id: TvNewsPane.py,v 1.3 2002/10/31 22:35:09 drt Exp $"
+__rcsid__ = "$Id: TvNewsPane.py,v 1.4 2002/11/01 08:55:10 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
@@ -11,7 +11,7 @@ from TvLuserland_wdr import *
 import tv.aggregator.db.items
 import tv.aggregator.db.services
 
-_items = tv.aggregator.db.items.getitemsByDate(maxitems=20)
+_items = tv.aggregator.db.items.getitemsByDate(maxitems=60)
 
 from pprint import pprint
 

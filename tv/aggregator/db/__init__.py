@@ -17,6 +17,7 @@ def init():
     _dbenv = db.DBEnv()
     _dbenv.set_lg_max(1024*1024)
     _dbenv.open(os.path.join(tv.config.get("fs.dbdir"), "bsddb"),
-                db.DB_CREATE | db.DB_THREAD | db.DB_INIT_MPOOL | db.DB_INIT_LOCK)
+                db.DB_CREATE | db.DB_THREAD | db.DB_INIT_MPOOL
+                | db.DB_INIT_LOCK | db.DB_INIT_LOG | DB_RECOVER )
 
 init()

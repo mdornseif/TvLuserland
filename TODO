@@ -3,7 +3,6 @@
 * Asyncrones Caregory reading
 * neue items
 * items später rendern
-* Feeds edieren
 * Feeds hinzufühen
 * Cut-und-Paste aus preview
 * Urls in Statusbar
@@ -13,7 +12,13 @@
 * PyCrust
 * Dupprobleme / BSDDUPDEB
 * Üreview abschaltbar
+* undelete
+* Subscribing to Sources
+* Vom NEwspane aus posten.
+* HTMLWindow tunen.
 
 Done
 * URL-Redirection auflösen
 * Asyncrone Preview anzeige
+* Feeds edieren
+* "Open in Browser"
