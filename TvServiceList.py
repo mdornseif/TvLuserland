@@ -6,6 +6,8 @@
 # Copyright:    
 #----------------------------------------------------------------------------
 
+__rcsid__ = "$Id: TvServiceList.py,v 1.2 2002/11/04 22:48:37 drt Exp $"
+
 from wxPython.wx import *
 from wxPython.lib.mixins.listctrl import wxColumnSorterMixin, wxListCtrlAutoWidthMixin
 import images
@@ -39,8 +41,6 @@ class ListCtrlItemList:
     def __getitem__(self, key):
         """Called to implement evaluation of
         self[key]."""
-        print key
-        print self.sortlist[key]
         return self.datadict[self.sortlist[key][1]]
     
 
@@ -104,8 +104,6 @@ class TestListCtrl(wxListCtrl, wxListCtrlAutoWidthMixin):
     # this demo we'll just calcualte them
     def OnGetItemText(self, item, col):
         self.itemlist
-        print self.columntokey[col]
-        print "Item %d, column %d - %r" % (item, col, self.columntokey[col])
         return self.itemlist[item].get(self.columntokey[col])
     
     def OnGetItemImage(self, item):
@@ -152,7 +150,11 @@ class TestListCtrl(wxListCtrl, wxListCtrlAutoWidthMixin):
 
     def OnItemactivated(self, event):
         print "activated"
-        event.Skip(true)
+        print self.itemlist[event.GetIndex()]
+        import TvService
+        dialog = TvService.ServiceDialog(self, self.itemlist[event.GetIndex()]["TVsourceurl"])
+        dialog.Show()
+
 
     def OnItemselected(self, event):
         print "selected"
