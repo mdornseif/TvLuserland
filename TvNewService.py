@@ -84,9 +84,9 @@ def NewService(parent):
         tv.aggregator.db.services.subscribe(serviceurl)
         
         # XXX
-        dlg = wxMessageDialog(parent, "You are subscribed now to %r. If I was an finished application I would now fetch data from the newly subscribed Service and present you some Service configuration Options. I'm not so you hafe to wait until the next fetching cycle is done. (Hint: Start rssfetch.py)" % sourceurl,
-                                  'Done',
-                                  wxOK | wxICON_INFORMATION)
+        print "dialog"
+        dlg = wxMessageDialog(parent, "You are subscribed now to %r. If I was an finished application I would now fetch data from the newly subscribed Service and present you some Service configuration Options. I'm not so you hafe to wait until the next fetching cycle is done. (Hint: Start rssfetch.py)" % serviceurl,
+                                  'Done', wxOK | wxICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
         
