@@ -6,7 +6,7 @@
 # Copyright:    nope
 #----------------------------------------------------------------------------
 
-__rcsid__ = "$Id: TvLuserland.py,v 1.4 2002/11/03 21:24:59 drt Exp $"
+__rcsid__ = "$Id: TvLuserland.py,v 1.5 2002/11/04 22:40:28 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
@@ -138,7 +138,7 @@ class TvMainFrame(wxFrame):
         
     def OnPreferences(self, event):
         import TvConfig 
-        dialog = TvConfigConfigDialog(self, -1)
+        dialog = TvConfig.ConfigDialog(self, -1)
         dialog.CentreOnParent()
         dialog.ShowModal()
         dialog.Destroy()
