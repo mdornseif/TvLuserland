@@ -1,62 +1,45 @@
-# based on:
 
-#----------------------------------------------------------------------
-# Name:        wxPython.lib.stattext
-# Purpose:     A generic wxGenStaticText class.  Using this should
-#              eliminate some of the platform differences in wxStaticText,
-#              such as background colours and mouse sensitivity.
-#
-# Author:      Robin Dunn
-#
-# Created:     8-July-2002
-# RCS-ID:      $Id: ClickableText.py,v 1.1 2002/10/31 22:35:09 drt Exp $
-# Copyright:   (c) 2002 by Total Control Software
-# Licence:     wxWindows license
-#----------------------------------------------------------------------
-
-"""
-"""
+__rcsid__ = "$Id: ClickableText.py,v 1.2 2002/11/04 22:37:59 drt Exp $"
 
 from wxPython.wx import *
-import string
+from wxPython.lib.buttons import  wxGenButtonEvent
 
-#----------------------------------------------------------------------
+import webbrowser
 
 class wxClickableText(wxPyControl):
-    labelDelta = 1
-
+    """ wxClickableText - A Text Control wich handles resizing itself
+    after the Label changes, generates clicks for events and is able to
+    change font and colour.
+    
+    based on: Robin Dunn's wxGenStaticText and lib.buttons
+    """
+    
     def __init__(self, parent, ID, label,
                  pos = wxDefaultPosition, size = wxDefaultSize,
-                 style = 0,
-                 name = "genstattext"):
-        wxPyControl.__init__(self, parent, ID, pos, size, style, wxDefaultValidator, name)
+                 style = 0, validator = wxDefaultValidator,
+                 name = "clickabletext"):
+        if style == 0:
+            style = wxNO_BORDER
+        wxPyControl.__init__(self, parent, ID, pos, size, style, validator, name)
+
+        self.downColour = wxRED
+        self.up = true
 
         wxPyControl.SetLabel(self, label) # don't check wxST_NO_AUTORESIZE yet
         self.SetPosition(pos)
         font = parent.GetFont()
         if not font.Ok():
             font = wxSystemSettings_GetSystemFont(wxSYS_DEFAULT_GUI_FONT)
-        wxPyControl.SetFont(self, font) # same here
+        wxPyControl.SetFont(self, font)  # same here
+        self.SetBestSize(size)
 
-        clr = parent.GetBackgroundColour()
-        if not clr.Ok():
-            clr = wxSystemSettings_GetSystemColour(wxSYS_COLOUR_BTNFACE)
-        self.SetBackgroundColour(clr)
-
-        clr = parent.GetForegroundColour()
-        if not clr.Ok():
-            clr = wxSystemSettings_GetSystemColour(wxSYS_COLOUR_BTNTEXT)
-        self.SetForegroundColour(clr)
-
-        rw, rh = size
-        bw, bh = self.GetBestSize()
-        if rw == -1: rw = bw
-        if rh == -1: rh = bh
-        self.SetSize(wxSize(rw, rh))
-
+        EVT_LEFT_DOWN(self,        self.OnLeftDown)
+        EVT_LEFT_UP(self,          self.OnLeftUp)
+        if wxPlatform == '__WXMSW__':
+            EVT_LEFT_DCLICK(self,  self.OnLeftDown)
+        EVT_MOTION(self,           self.OnMotion)
         EVT_ERASE_BACKGROUND(self, self.OnEraseBackground)
         EVT_PAINT(self,            self.OnPaint)
-
 
     def SetLabel(self, label):
         """
@@ -68,8 +51,9 @@ class wxClickableText(wxPyControl):
         if not style & wxST_NO_AUTORESIZE:
             self.SetSize(self.GetBestSize())
             self.GetContainingSizer().SetItemMinSize(self,
-                                                   self.GetSize().GetWidth(),
-                                                       self.GetSize().GetHeight())
+                                                     self.GetSize().GetWidth(),
+                                                     self.GetSize().GetHeight())
+
             self.GetContainingSizer().Layout()
 
     def SetFont(self, font):
@@ -83,54 +67,135 @@ class wxClickableText(wxPyControl):
             self.SetSize(self.GetBestSize())
 
 
+    def SetBestSize(self, size=None):
+        """
+        Given the current font and bezel width settings, calculate
+        and set a good size.
+        """
+        if size is None:
+            size = wxSize(-1,-1)
+        if type(size) == type(()):
+            size = wxSize(size[0], size[1])
+        size = wxSize(size.width, size.height)  # make a copy
+
+        best = self.GetBestSize()
+        if size.width == -1:
+            size.width = best.width
+        if size.height == -1:
+            size.height = best.height
+
+        self.SetSize(size)
+
+
     def DoGetBestSize(self):
         """Overridden base class virtual.  Determines the best size of the
-        button based on the label size."""
-        label = self.GetLabel()
-        maxWidth = totalHeight = 0
-        for line in label.split('\n'):
-            if line == '':
-                w, h = self.GetTextExtent('W')  # empty lines have height too
-            else:
-                w, h = self.GetTextExtent(line)
-            totalHeight += h
-            maxWidth = max(maxWidth, w)
-        return wxSize(maxWidth, totalHeight)
+        button based on the label and bezel size."""
+        w, h, useMin = self._GetLabelSize()
+        return (w, h)
 
 
     def AcceptsFocus(self):
         """Overridden base class virtual."""
-        return false
+        return FALSE
+
+
+    def _GetLabelSize(self):
+        """ used internally """
+        w, h = self.GetTextExtent(self.GetLabel())
+        return w, h, true
+
+
+    def Notify(self):
+        evt = wxGenButtonEvent(wxEVT_COMMAND_BUTTON_CLICKED, self.GetId())
+        evt.SetIsDown(not self.up)
+        evt.SetButtonObj(self)
+        evt.SetEventObject(self)
+        self.GetEventHandler().ProcessEvent(evt)
+
+
+
+    def DrawLabel(self, dc, width, height, dw=0, dy=0):
+        dc.SetFont(self.GetFont())
+        if self.IsEnabled():
+            if self.up:
+                dc.SetTextForeground(self.GetForegroundColour())
+            else:
+                dc.SetTextForeground(self.downColour)                
+        else:
+            dc.SetTextForeground(wxSystemSettings_GetSystemColour(wxSYS_COLOUR_GRAYTEXT))
+        label = self.GetLabel()
+        tw, th = dc.GetTextExtent(label)
+        dc.DrawText(label, (width-tw)/2+dw, (height-th)/2+dy)
+
 
 
     def OnPaint(self, event):
-        width, height = self.GetClientSize()
+        (width, height) = self.GetClientSizeTuple()
+        x1 = y1 = 0
+        x2 = width-1
+        y2 = height-1
         dc = wxBufferedPaintDC(self)
-        dc.SetBackground(wxBrush(self.GetBackgroundColour(), wxSOLID))
+        dc.SetBackgroundMode(wxTRANSPARENT)
         dc.Clear()
-        dc.SetFont(self.GetFont())
-        label = self.GetLabel()
-        style = self.GetWindowStyleFlag()
-        x = y = 0
-        for line in label.split('\n'):
-            if line == '':
-                w, h = self.GetTextExtent('W')  # empty lines have height too
-            else:
-                w, h = self.GetTextExtent(line)
-            if style & wxALIGN_RIGHT:
-                x = width - w
-            if style & wxALIGN_CENTER:
-                x = (width - w)/2
-            dc.DrawText(line, x, y)
-            y += h
-
+        self.DrawLabel(dc, width, height)
 
     def OnEraseBackground(self, event):
         pass
 
 
+    def OnLeftDown(self, event):
+        if not self.IsEnabled():
+            return
+        self.up = false
+        #self.CaptureMouse()
+        #self.SetFocus()
+        self.Refresh()
+        event.Skip()
 
 
-#----------------------------------------------------------------------
+    def OnLeftUp(self, event):
+        if not self.IsEnabled():
+            return
+        #self.ReleaseMouse()
+        if not self.up:    # if the button was down when the mouse was released...
+            self.Notify()
+        self.up = true
+        self.Refresh()
+        event.Skip()
 
 
+    def OnMotion(self, event):
+        if not self.IsEnabled():
+            return
+        if event.LeftIsDown():
+            x,y = event.GetPositionTuple()
+            w,h = self.GetClientSizeTuple()
+            if self.up and x<w and x>=0 and y<h and y>=0:
+                self.up = false
+                self.Refresh()
+                return
+            if not self.up and (x<0 or y<0 or x>=w or y>=h):
+                self.up = true
+                self.Refresh()
+                return
+        event.Skip()
+
+
+
+
+class wxLinkText(wxClickableText):
+    """Display a URL similar to static text but open it in a WEbbrowser if a user clicks on it."""
+
+    def __init__(self, parent, ID, label,
+                 pos = wxDefaultPosition, size = wxDefaultSize,
+                 style = 0, validator = wxDefaultValidator,
+                 name = "linktext"):
+        wxClickableText.__init__(self, parent, ID, label, pos, size, style, validator, name)
+        self.SetForegroundColour(wxBLUE)
+
+
+    def OnLeftUp(self, event):
+        wxClickableText.OnLeftUp(self, event)
+        if self.IsEnabled():
+            webbrowser.open(self.GetLabel())
+        event.Skip()
