@@ -1,6 +1,8 @@
 """Start a funcion in its own thread and get it's returnvalue via an
 event."""
 
+__rcsid__ = "$Id: asyncfunccall.py,v 1.3 2002/10/31 22:35:09 drt Exp $"
+
 import sys
 import threading
 import time
@@ -48,9 +50,7 @@ class _Worker(threading.Thread):
         val = apply(self.func, self.args, self.kwargs)
         # raise a event with 'val'
         self.event = AsyncFuncDoneEvent(val, self.myId)
-        print "posting event"
         wxPostEvent(self.parent, self.event)
-        print "posted"
         # done
     
     def GetId(self):

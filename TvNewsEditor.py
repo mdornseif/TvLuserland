@@ -7,6 +7,7 @@ from TvLuserland_wdr import *
 
 import tv.weblog.metaWeblog
 import tv.aggregator.db.services
+
 from asyncfunccall import *
 
 import urllib
@@ -34,17 +35,17 @@ class EditPostDialog(wxDialog):
         wxDialog.__init__(self, parent, id, title, pos, size, style)
         
         DialogElements = EditPostFunc( self, true )
-
+                                                                
         # preset content if wanted
         self.GetPosttitle().SetValue(item.get("title", "").strip())
         self.GetPostlink().SetValue(item.get("link", "").strip())
         if "TVsourceurl" in item:
             service = tv.aggregator.db.services.getservice(item["TVsourceurl"])
-            via = '[<a href="%s">%s</a>]' % (service.get("link",
+            feedinfo = service["feedinfo"]
+            config = service["config"]
+            via = '[<a href="%s">%s</a>]' % (config.get("publiclink",
                                                          item["TVsourceurl"]),
-                                             service.get("title",
-                                                         service.get("managingEditor",
-                                                                     service.get("webMaster", "source"))))
+                                             config.get("publicname", ""))
         else:
             via = ""
         text = ("%s %s" % (item.get("description", "").strip(), via)).strip()
@@ -102,12 +103,16 @@ class EditPostDialog(wxDialog):
         DialogElements.SetSizeHints(self) 
 
         # WDR: handler declarations for EditPost
+        EVT_BUTTON(self, ID_BROWSE, self.OnBrowse)
         EVT_BUTTON(self, wxID_POST, self.OnPost)
         EVT_SIZE(self, self.OnSize)
         EVT_ASYNCFUNC_DONE(self, self.OnAsyncFuncDone)
         
 
     # WDR: methods for EditPost
+
+    def GetBrowse(self):
+        return wxPyTypeCast( self.FindWindowById(ID_BROWSE), "wxButton" )
 
     def GetPosttitle(self):
         return wxPyTypeCast( self.FindWindowById(ID_POSTTITLE), "wxTextCtrl" )
@@ -126,6 +131,9 @@ class EditPostDialog(wxDialog):
 
     # WDR: handler implementations for EditPost
 
+    def OnBrowse(self, event):
+        import webbrowser
+        webbrowser.open(self.GetPostlink().GetValue())
 
     def OnBeforeNavigate2(self, evt):
         self.logEvt('OnBeforeNavigate2', evt)
@@ -166,7 +174,12 @@ class EditPostDialog(wxDialog):
     def OnPost(self, event):
         print "posting"
         # Build a Posting from the Dialog Data
-        self.GetPostingtext().SetLabel("Generating entry")
+        info = self.GetPostingtext()
+        info.SetLabel("Generating entry")
+        info.GetContainingSizer().SetItemMinSize(info,
+                                                 info.GetSize().GetWidth(), info.GetSize().GetHeight())
+        info.GetContainingSizer().Layout()
+
         self.item = {}
         x = self.GetPosttext().GetValue()
         if x:
@@ -181,12 +194,15 @@ class EditPostDialog(wxDialog):
         for x in self.categories:
             if x.GetValue():
                 self.item['categories'].append(x.GetLabel())
-        self.GetPostingtext().SetLabel("Sending to Weblog")
-        # XXX: The Label has to reposition itself
+        info.SetLabel("Sending to Weblog")
+        print "Sending to Weblog"
         tv.weblog.metaWeblog.newPost(self.item)            
-        self.GetPostingtext().SetLabel("Done")
+        print "posted"
+        info.SetLabel("Done")
+
         self.Show(FALSE)
-        # XXX: delete posting
+
+        # delete posting
         if self.killfunc:
             self.killfunc()
         

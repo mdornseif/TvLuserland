@@ -1,10 +1,12 @@
-#!/bin/env python
+#!/usr/local/bin/python
 #----------------------------------------------------------------------------
 # Name:         TvLuserland.py
 # Author:       md@hudora.de
 # Created:      13/10/2002
 # Copyright:    nope
 #----------------------------------------------------------------------------
+
+__rcsid__ = "$Id: TvLuserland.py,v 1.3 2002/10/31 22:35:09 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
@@ -18,8 +20,6 @@ from TvConfig import *
 from pprint import pprint
 
 import tv.aggregator.db.services
-
-from asyncfunccall import *
 
 class TvMainFrame(wxFrame):
     def __init__(self, parent, id, title,
@@ -68,11 +68,7 @@ class TvMainFrame(wxFrame):
         EVT_MENU(self, ID_PREFERENCES, self.OnPreferences)
         EVT_MENU(self, ID_QUIT, self.OnQuit)
         EVT_CLOSE(self, self.OnCloseWindow)
-        EVT_ASYNCFUNC_DONE(self, self.OnAsyncFuncDone)
         
-        import time
-        startAsyncFunc(self, time.sleep, (10))
-
 
     # WDR: methods for TvMainFrame
     
@@ -140,9 +136,6 @@ class TvMainFrame(wxFrame):
     def OnCloseWindow(self, event):
         self.Destroy()
 
-    def OnAsyncFuncDone(self, event):
-        print "ASYNC EVENT!"
-        print dir(event)
 
 #----------------------------------------------------------------------------
 

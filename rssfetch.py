@@ -1,3 +1,7 @@
+#!/usr/local/bin/python
+
+__rcsid__ = "$Id: rssfetch.py,v 1.2 2002/10/31 22:35:09 drt Exp $"
+
 import rssparser
 import random
 import md5
@@ -333,7 +337,7 @@ if __name__ == '__main__':
     from pprint import pprint
     for url in urls:
         print url
-        service = tv.aggregator.db.services.getservice(url)
+        service = tv.aggregator.db.services.getfeedinfo(url)
         result = rssparser.parse(url)
         service.update(result["channel"])
         fixService(service, result.get("etag"), result.get("modified"))
@@ -355,7 +359,7 @@ if __name__ == '__main__':
             #pprint(x)
         print
         #pprint(service)
-        tv.aggregator.db.services.saveservice(service)
+        tv.aggregator.db.services.savefeedinfo(service)
         
     tv.aggregator.db.items.save()
     #tv.aggregator.db.items.getitemsByDate("2002-10-22 12:53:27.15", 2)

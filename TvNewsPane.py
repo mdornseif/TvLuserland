@@ -1,13 +1,17 @@
+__rcsid__ = "$Id: TvNewsPane.py,v 1.3 2002/10/31 22:35:09 drt Exp $"
+
 from wxPython.wx import *
 from wxPython.html import *
 
 from TvNewsEditor import *
+from TvService import *
 
 from TvLuserland_wdr import *
 
 import tv.aggregator.db.items
+import tv.aggregator.db.services
 
-_items = tv.aggregator.db.items.getitemsByDate(maxitems=50)
+_items = tv.aggregator.db.items.getitemsByDate(maxitems=20)
 
 from pprint import pprint
 
@@ -21,25 +25,34 @@ class NewsItem(wxPanel):
         self.item = item
         self.parent = parent
 
+        # test wxPyClickableHtmlWindow and wxGenStaticText
         self.html = wxHtmlWindow(self, -1, size=wxDLG_SZE(self, 300, -1),
                                  style=wxHW_SCROLLBAR_NEVER)
         self.html.SetPage("<html><body>%s</body></html>" % self.create_html(item))
         ir = self.html.GetInternalRepresentation()
         self.html.SetSize( (ir.GetWidth()+5, ir.GetHeight()+5))
         wdr = NewsItemFunc( self, true )
-        
+        source = self.GetSource()
+        source.SetLabel(tv.aggregator.db.services.getconfig(item["TVsourceurl"]).get("privatename", ""))
+
         # WDR: handler declarations for NewsItem
         EVT_BUTTON(self, ID_EDIT, self.OnEdit)
         EVT_BUTTON(self, ID_POST, self.OnPost)
         EVT_BUTTON(self, ID_KILL, self.OnKill)
+        EVT_BUTTON(self, ID_SOURCE, self.OnSource)
+        EVT_LEFT_UP(self.GetSource(), self.OnSource)
+                
 
-
-    # WDR: methods for NewsItem
     def create_html(self, item):
         return "<b>%s</b><br><i>%s</i><br>%s" % (item.get("title", "").strip(),
                                              item.get("link", "").strip()[:50],
                                              item.get("description"))
     
+    # WDR: methods for NewsItem
+    def GetSource(self):
+        return self.FindWindowById(ID_SOURCE)
+        return wxPyTypeCast( self.FindWindowById(ID_SOURCE), "wxStaticText" )
+
     def GetHtml(self):
         return wxPyTypeCast( self.FindWindowById(ID_HTML), "wxHtmlWindow" )
 
@@ -53,6 +66,10 @@ class NewsItem(wxPanel):
         return wxPyTypeCast( self.FindWindowById(ID_KILL), "wxButton" )
 
     # WDR: handler implementations for NewsItem
+
+    def OnSource(self, event):
+        dialog = ServiceDialog(self.parent, self.item.get("TVsourceurl"))
+        dialog.Show()
 
     def OnEdit(self, event):
         dialog = EditPostDialog(self.parent, -1, item = self.item, killfunc = lambda: self.parent.removeItem(self.GetId(), self.item))
@@ -83,13 +100,6 @@ class TvNewsPane(wxScrolledWindow):
         EVT_CHILD_FOCUS(self, self.OnChildFocus)
         self.SetSize((660, 400))
         wxCallAfter(self.Scroll, 0, 0) # scroll back to top after initial events
-        #pprint(box.GetBestSize())
-        #pprint(box.GetClientSize())
-        #pprint(box.GetSizeTuple())
-        #pprint(self.GetSize())
-        #pprint(box.GetMaxSize())
-        #pprint(box.GetVirtualSizeTuple())
-        #pprint(dir(self))
 
     def createContentBox(self):
         box = wxBoxSizer(wxVERTICAL)        
@@ -115,12 +125,11 @@ class TvNewsPane(wxScrolledWindow):
         self.AdjustScrollbars()
         self.refresh()
         #wxCallAfter(self.Scroll, 0, 0) # scroll back to top after initial events
-        print "done"
-
+        # XXX resize
 
     def refresh(self):
         _items = tv.aggregator.db.items.getitemsByDate(maxitems=100)
-        print "refreshing"
+        print "XXX: refreshing"
 
     def OnChildFocus(self, evt):
         # If the child window that gets the focus is not visible,

@@ -100,15 +100,11 @@ def deleteitem(guid, date = None, sourceurl = None):
     give this to removeitem to speed things up."""
     
     item = getitem(guid)
-    from pprint import pprint
-    pprint(item)
-    pprint((guid, date, sourceurl))
 
     if date == None or sourceurl == None:
         item = getitem(guid)
         date = item["TVdateobject"]
         sourceurl = item["TVsourceurl"]
-    pprint((guid, date, sourceurl))
 
     try:
         cur = _itembydatedb.cursor()
@@ -154,7 +150,6 @@ def save():
     fp.close()
 
 def close():
-    print "itemdb shutdown"
     save()
     _itemdb.close()
     _itembysourcedb.close()
