@@ -8,25 +8,23 @@
 <!-- *#guidpage -->
 
 #block title
-disLEXia - overview for $date.strftime("%B") $date.year
+disLEXia - Homepage
 #end block title
 
 
 #block pageheader
 <h1>disLEXia</h1>
-<h2>overview for $date.strftime("%B") $date.year</h2>
 #end block pageheader    
 
+
 #block pagecontent
-
-
 <table summary="page structure">
 <tr>
 <td valign="top">
 #for $day in $daylist
   <h3><a name="$day.date.compactdate" href="$day.daypage"><img border="0" src="http://downloads.redjupiter.com/users/images/theme35/permalink.gif"></a> $day.date.longdate</h3>
   #for $x in $day.itemlist
-    $x.item.guidpagelink<br>
+    $x.rendered<br>
   #end for
 #end for
 

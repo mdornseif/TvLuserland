@@ -1,21 +1,34 @@
+<!-- #* -->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
+    <meta content=
+    "HTML Tidy for Mac OS X (vers 1st December 2002), see www.w3.org"
+          name="generator">
     <title></title>
   </head>
-
   <body>
-    
-    <h4><a name="$item.guid"></a>$item.title</h4>
-    
+    <!-- *#item -->
+    <h4>
+      <a name="$item.guid"></a>$item.title
+    </h4>
     <p>
-      $item.text
-      <br>
-      <font class="small" size="-1" color="gray">
-	$item.date.compacttime |
-	$item.permalink | $item.guidpagelink
-      </font>
-    </p>
+      $item.text<br>
+       <span style="infoline"> 
+         $item.date.compacttime | 
+         $item.permalink
+      </span>
+<!-- <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rdf:Description about="
+</rdf:RDF>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:trackback="http://madskills.com/public/xml/rss/module/trackback/">
+<rdf:Description rdf:about="http://www.foo.com/archive.html#foo" dc:title="$item.title"
+dc:identifier="$item.permalink"  trackback:ping="http://md.hudora.de/cgi-bin/tb.cgi?tb_id=$item.guid" />
+</rdf:RDF> -->
+
+   </p>
     <hr width="30%">
-  </body>
+    <!-- #* -->
+    </body>
 </html>
+<!-- *#/item -->

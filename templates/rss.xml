@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding='ISO-8859-1'?>
+<rss version="2.0" xmlns:blogChannel="http://backend.userland.com/blogChannelModule">
+  <channel>
+    <title>disLEXia</title>
+    <link>http://md.hudora.de/blog/</link>
+    <description>lies, laws, legal research, crime and the internet</description>
+    <language>en-us</language>
+##    <blogChannel:mySubscriptions>http://radio.weblogs.com/0001015/gems/mySubscriptions.opml</blogChannel:mySubscriptions>
+    <copyright>Nope</copyright>
+##    <lastBuildDate>Sat, 28 Dec 2002 06:56:01 GMT</lastBuildDate>
+    <docs>http://backend.userland.com/rss</docs>
+    <generator>TV LuserLand</generator>
+##    <category domain="Syndic8">1765</category>
+##    <category domain="http://www.weblogs.com/rssUpdates/changes.xml">rssUpdates</category>
+##    <managingEditor>dave@userland.com</managingEditor>
+##    <webMaster>dave@userland.com</webMaster>
+##pubDate
+##category
+##<cloud domain="radio.xmlstoragesystem.com" port="80" path="/RPC2"
+##       registerProcedure="xmlStorageSystem.rssPleaseNotify"
+##       protocol="xml-rpc" />
+##generator
+    <ttl>60</ttl>
+#for $day in $daylist
+  #for $x in $day.itemlist
+    <item>
+      <title>$x.item.title</title>
+      <link>$x.item.guidpageurl</link>
+## category Includes the item in one or more categories.
+##    <category domain="http://www.fool.com/cusips">MSFT</category>
+## commentsURL of a page for comments relating to the item.
+##    <source url="http://static.userland.com/tomalak/links2.xml">Tomalak'sRealm</source>
+      <description>$escape($x.item.text)</description>
+##    <pubDate>Sat, 28 Dec 2002 06:52:18 GMT</pubDate>
+      <guid isPermaLink="false">$x.item.guid</guid>
+    </item>
+  #end for
+#end for
+  </channel>
+</rss>
