@@ -41,7 +41,7 @@ def init():
     _servicedb = db.DB(_dbenv)
     _servicedb.open("services",   
                     dbtype = db.DB_BTREE,
-                    flags = db.DB_CREATE|db.DB_DIRTY_READ|db.DB_THREAD,
+                    flags = db.DB_CREATE|db.DB_THREAD,
                     mode = 0644)
     atexit.register(close)
 
@@ -50,7 +50,7 @@ def close():
     _servicedb.close()
 
 
-def getservicelist():
+def getservices():
     return _servicedb.keys()
 
     
@@ -65,13 +65,25 @@ def getservice(sourceurl):
                                "privatename": data.get("title", "-none-"),
                                "publiclink": data.get("link"),
                                "fetchhowoften": 60}}
+        # check and fix some errors
+        if "publicname" not in data["config"]:
+            data["config"]["publicname"] = data["feedinfo"].get("title", "-none-")
+        if "privatename" not in data["config"]:
+            data["config"]["privatename"] = data["config"].get("publicname", "-none-")
+        if "publiclink" not in data["config"]:
+            data["config"]["publiclink"] = data["feedinfo"].get("link", "-none-" )
+            
         return data
     else:
         # new entry
         return {"feedinfo": {"TVsourceurl": sourceurl, "TVcreated": mx.DateTime.now()},
                 "config": {}}
 
-
+def getserviceflat(sourceurl):
+    data = getservice(sourceurl)
+    ret = data["feedinfo"]
+    ret.update(data["config"])
+    return ret
 
 def getfeedinfo(sourceurl):
     return getservice(sourceurl)["feedinfo"]
@@ -102,7 +114,6 @@ feedinfo_cachetime = 0
 feedinfo_cache = None
 
 def getsubscriptions():
-    
     ret = []
     try:
         if os.stat(os.path.join(tv.config.get("fs.dbdir"), "subscriptions.opml")).st_mtime < feedinfo_cachetime:
@@ -110,13 +121,14 @@ def getsubscriptions():
         else:
             for x in opml_parser.load(os.path.join(tv.config.get("fs.dbdir"), "subscriptions.opml")):
                 ret.append(x[1])
-                feedinfo_cache = ret
+            feedinfo_cache = ret
             feedinfo_cacchetime = time.time()
     except IOError:
-        pass
+        ret = ["http://radio.weblogs.com/0112292/"]
     return ret
 
 def savesubscriptions(subscriptions):
+    print "generating", time.time()
     feedinfo_cache = subscriptions
     feedinfo_cacchetime = time.time()
     outlines = []
@@ -127,6 +139,7 @@ def savesubscriptions(subscriptions):
         title = config.get("publicname", feedinfo.get("title", "Unfnown title for: %s" % x))
         outlines.append('<outline title="%s" xmlUrl="%s" />' % (title.replace("&", "&amp;"), x.replace("&", "&amp;")))
 
+    print "saving", time.time()
     fd = open(os.path.join(tv.config.get("fs.dbdir"), "subscriptions.opml"), 'w')
     fd.write('''<opml version="1.0">
 <body>
@@ -135,9 +148,10 @@ def savesubscriptions(subscriptions):
 </opml>
 ''' % "\n".join(outlines))
     fd.close()
+    print "done", time.time()
 
 def issubscribed(serviceurl):
-    return serviceurl in opml_parser.load(os.path.join(tv.config.get("fs.dbdir"), "services.opml"))
+    return serviceurl in getsubscriptions()
                                
 
 def subscribe(serviceurl):

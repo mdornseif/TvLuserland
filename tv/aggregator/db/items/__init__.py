@@ -35,7 +35,7 @@ def init():
     _itemdb = db.DB(_dbenv)
     _itemdb.open("items",   
                 dbtype = db.DB_BTREE,
-                flags = db.DB_CREATE|db.DB_DIRTY_READ|db.DB_THREAD,
+                flags = db.DB_CREATE|db.DB_THREAD,
                 mode = 0644)
 
     # create secondary DBs
@@ -43,7 +43,7 @@ def init():
     _itembydatedb.set_flags(db.DB_DUP)
     _itembydatedb.open("items-bydate",
                 dbtype = db.DB_BTREE,
-                flags = db.DB_CREATE|db.DB_DIRTY_READ|db.DB_THREAD,
+                flags = db.DB_CREATE|db.DB_THREAD,
                 mode = 0644)
     _itembysourcedb = db.DB(_dbenv)
     _itembysourcedb.set_flags(db.DB_DUP)
@@ -116,13 +116,13 @@ def deleteitem(guid, date = None, sourceurl = None):
         print msg
         # something strange happened, we couldn't find this posting. We do
         # a full DB scan to find it's guid and remove it. ugly but effective.
+        cur = _itembydatedb.cursor()
         for k, v in _itembydatedb.items():
-            cur = _itembydatedb.cursor()
             if v == guid:
                 print "removing", k, guid
                 rec = cur.set_both(k, guid)
                 cur.delete() 
-            cur.close()
+        cur.close()
 
     try:
         cur = _itembysourcedb.cursor()
@@ -134,14 +134,48 @@ def deleteitem(guid, date = None, sourceurl = None):
         print msg
         # something strange happened, we couldn't find this posting. We do
         # a full DB scan to find it's guid and remove it. ugly but effective.
+        cur = _itembydatedb.cursor()
         for k, v in _itembysourcedb.items():
-            cur = _itembydatedb.cursor()
             if v == guid:
                 print "removing", k, guid
                 rec = cur.set_both(k, guid)
                 cur.delete() 
-            cur.close()
+        cur.close()
             
+
+def deleteallitemsfromsource(sourceurl):
+    # get guids of all items and remove them from itembysourcedb
+    guidlist = {}
+    cur = _itembysourcedb.cursor()
+    rec = cur.set(sourceurl)
+    while rec:
+        guidlist[rec[1]] = 1
+        cur.delete()
+        rec = cur.next_dup()
+    cur.close()
+
+    # find them in itembydatedb by iterating (!) and remove them there
+    cur = _itembydatedb.cursor()
+    for k, v in _itembydatedb.items():
+        if v in guidlist:
+            print "removing", k, v
+            rec = cur.set_both(k, v)
+            cur.delete()
+            del guidlist[v]
+    cur.close()
+    
+def getnrofunreaditems():
+    return len(_itembydatedb.keys())
+
+def getnrofunreaditemsforsource(sourceurl):
+    ret = 0
+    cur = _itembysourcedb.cursor()
+    rec = cur.set(sourceurl)
+    while rec:
+        ret += 1
+        rec = cur.next_dup()
+    cur.close()
+    return ret
 
 def save():
     fp = open(os.path.join(tv.config.get("fs.dbdir"), "items.dupedb.pickle"), 'w')

@@ -1,8 +1,14 @@
 * Umlaute maskieren
 * Asyncrones Posten
+* bsddb recovery
+* postings per service merken
+* Beim Posten verschieben sich die Buttons
+* deleted item DB
+* Show nr of unread items in toolbar
 * Asyncrones Caregory reading
-* neue items
+* neue items zum pane hinzufügen
 * items später rendern
+* "Open in Browser" in Pane
 * Feeds hinzufühen
 * Cut-und-Paste aus preview
 * Urls in Statusbar
@@ -11,14 +17,22 @@
 * Anzahl der ungelesenen Items anzeigen
 * PyCrust
 * Dupprobleme / BSDDUPDEB
-* Üreview abschaltbar
 * undelete
-* Subscribing to Sources
 * Vom NEwspane aus posten.
 * HTMLWindow tunen.
+* Trackback & Related Technologies
+* Message filter plug-in's
+* Good PReview on Maxx OS X
+* "MIG: server died : CGSExtractEventRecordsFromMessage" errors
+* fensterliste
+* content:encoded
+* ETAGs
+* Ampheta / Radio One click subscription
+* Drag'n Drop
+* tree
 
 Done
 * URL-Redirection auflösen
 * Asyncrone Preview anzeige
 * Feeds edieren
-* "Open in Browser"
+* Preview abschaltbar

@@ -103,8 +103,8 @@ def EditPostFunc( parent, call_fit = true, set_sizer = true ):
     
     return item0
 
-ID_SERVICETREE = 10009
-ID_LINE = 10010
+ID_SERVICELIST = 10009
+ID_NEWSERVICE = 10010
 ID_NEWPOST = 10011
 ID_REFRESH = 10012
 ID_NEWSPANE = 10013
@@ -112,28 +112,28 @@ ID_NEWSPANE = 10013
 def ReadNewsFunc( parent, call_fit = true, set_sizer = true ):
     item0 = wxBoxSizer( wxHORIZONTAL )
     
-    item1 = wxTreeCtrl( parent, ID_SERVICETREE, wxDefaultPosition, wxSize(120,160), wxTR_HAS_BUTTONS|wxTR_LINES_AT_ROOT|wxNO_BORDER )
-    item0.AddWindow( item1, 0, wxGROW|wxALIGN_CENTER_HORIZONTAL|wxALL, 5 )
-
-    item2 = wxStaticLine( parent, ID_LINE, wxDefaultPosition, wxSize(-1,20), wxLI_VERTICAL )
-    item0.AddWindow( item2, 0, wxGROW|wxALIGN_CENTER_HORIZONTAL|wxALL, 5 )
-
-    item3 = wxBoxSizer( wxVERTICAL )
+    item1 = wxBoxSizer( wxVERTICAL )
     
-    item4 = wxBoxSizer( wxHORIZONTAL )
+    item2 = wxBoxSizer( wxHORIZONTAL )
     
+    item3 = wxButton( parent, ID_SERVICELIST, "Service List", wxDefaultPosition, wxDefaultSize, 0 )
+    item2.AddWindow( item3, 0, wxALIGN_CENTRE|wxALL, 5 )
+
+    item4 = wxButton( parent, ID_NEWSERVICE, "New Service", wxDefaultPosition, wxDefaultSize, 0 )
+    item2.AddWindow( item4, 0, wxALIGN_CENTRE|wxALL, 5 )
+
     item5 = wxButton( parent, ID_NEWPOST, "New Post", wxDefaultPosition, wxDefaultSize, 0 )
-    item4.AddWindow( item5, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item2.AddWindow( item5, 0, wxALIGN_CENTRE|wxALL, 5 )
 
     item6 = wxButton( parent, ID_REFRESH, "Refresh", wxDefaultPosition, wxDefaultSize, 0 )
-    item4.AddWindow( item6, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item2.AddWindow( item6, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item3.AddSizer( item4, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+    item1.AddSizer( item2, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
     item7 = parent.newspane
-    item3.AddWindow( item7, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item1.AddWindow( item7, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item0.AddSizer( item3, 0, wxGROW|wxALIGN_CENTER_HORIZONTAL|wxALL, 5 )
+    item0.AddSizer( item1, 0, wxGROW|wxALIGN_CENTER_HORIZONTAL|wxALL, 5 )
 
     if set_sizer == true:
         parent.SetAutoLayout( true )
@@ -398,20 +398,23 @@ ID_LASTREQUEST = 10033
 ID_LASTNEWITEM = 10034
 ID_ITEMSFETCHED = 10035
 ID_UNREADITEMS = 10036
-ID_ERRORS = 10037
-ID_LASTERROR = 10038
-ID_LASTERRORTEXT = 10039
-ID_CHANNELINFO = 10040
-ID_PUBLICNAME = 10041
-ID_PRIVATENAME = 10042
-ID_PUBLICLINK = 10043
-ID_HOWOFTEN = 10044
-ID_CHECKFORREDIRECTED = 10045
-ID_FIXUMLAUTS = 10046
-ID_EXTRACTLTD = 10047
-ID_REMOVEMARKUP = 10048
-ID_KILLITEMS = 10049
-ID_REMOVESERVICE = 10050
+ID_LINE = 10037
+ID_ERRORS = 10038
+ID_LASTERROR = 10039
+ID_LASTERRORTEXT = 10040
+ID_TITLE = 10041
+ID_LINK = 10042
+ID_CHANNELINFO = 10043
+ID_PUBLICNAME = 10044
+ID_PRIVATENAME = 10045
+ID_PUBLICLINK = 10046
+ID_HOWOFTEN = 10047
+ID_CHECKFORREDIRECTED = 10048
+ID_FIXUMLAUTS = 10049
+ID_EXTRACTLTD = 10050
+ID_REMOVEMARKUP = 10051
+ID_KILLITEMS = 10052
+ID_REMOVESERVICE = 10053
 
 def ServiceDialogFunc( parent, call_fit = true, set_sizer = true ):
     item0 = wxBoxSizer( wxVERTICAL )
@@ -482,91 +485,127 @@ def ServiceDialogFunc( parent, call_fit = true, set_sizer = true ):
     item21 = wxStaticBoxSizer( item22, wxVERTICAL )
     parent.rsssizer = item21
     
-    item23 = wxTextCtrl( parent, ID_CHANNELINFO, "", wxDefaultPosition, wxSize(180,100), wxTE_MULTILINE )
-    item21.AddWindow( item23, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+    item23 = wxFlexGridSizer( 0, 2, 0, 0 )
+    
+    item24 = wxStaticText( parent, ID_TEXT, "Title", wxDefaultPosition, wxDefaultSize, 0 )
+    item23.AddWindow( item24, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+
+    item25 = wxStaticText( parent, ID_TITLE, "-unset-", wxDefaultPosition, wxDefaultSize, 0 )
+    item23.AddWindow( item25, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+
+    item26 = wxStaticText( parent, ID_TEXT, "Link", wxDefaultPosition, wxDefaultSize, 0 )
+    item23.AddWindow( item26, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+
+    item27 = wxStaticText( parent, ID_LINK, "-unset-", wxDefaultPosition, wxDefaultSize, 0 )
+    item23.AddWindow( item27, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+
+    item21.AddSizer( item23, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+
+    item28 = wxTextCtrl( parent, ID_CHANNELINFO, "", wxDefaultPosition, wxSize(180,100), wxTE_MULTILINE )
+    item21.AddWindow( item28, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
     item0.AddSizer( item21, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
-    item24 = wxStaticLine( parent, ID_LINE, wxDefaultPosition, wxSize(20,-1), wxLI_HORIZONTAL )
-    item0.AddWindow( item24, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+    item29 = wxStaticLine( parent, ID_LINE, wxDefaultPosition, wxSize(20,-1), wxLI_HORIZONTAL )
+    item0.AddWindow( item29, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
-    item25 = wxFlexGridSizer( 0, 2, 0, 0 )
+    item30 = wxFlexGridSizer( 0, 2, 0, 0 )
     
-    item26 = wxStaticText( parent, ID_TEXT, "Public Name", wxDefaultPosition, wxDefaultSize, 0 )
-    item25.AddWindow( item26, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item31 = wxStaticText( parent, ID_TEXT, "Public Name", wxDefaultPosition, wxDefaultSize, 0 )
+    item30.AddWindow( item31, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item27 = wxTextCtrl( parent, ID_PUBLICNAME, "", wxDefaultPosition, wxSize(180,-1), 0 )
-    item25.AddWindow( item27, 0, wxGROW|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item32 = wxTextCtrl( parent, ID_PUBLICNAME, "", wxDefaultPosition, wxSize(180,-1), 0 )
+    item30.AddWindow( item32, 0, wxGROW|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item28 = wxStaticText( parent, ID_TEXT, "Private Name", wxDefaultPosition, wxDefaultSize, 0 )
-    item25.AddWindow( item28, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item33 = wxStaticText( parent, ID_TEXT, "Private Name", wxDefaultPosition, wxDefaultSize, 0 )
+    item30.AddWindow( item33, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item29 = wxTextCtrl( parent, ID_PRIVATENAME, "", wxDefaultPosition, wxSize(80,-1), 0 )
-    item25.AddWindow( item29, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item34 = wxTextCtrl( parent, ID_PRIVATENAME, "", wxDefaultPosition, wxSize(80,-1), 0 )
+    item30.AddWindow( item34, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item30 = wxStaticText( parent, ID_TEXT, "Public Link", wxDefaultPosition, wxDefaultSize, 0 )
-    item25.AddWindow( item30, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item35 = wxStaticText( parent, ID_TEXT, "Public Link", wxDefaultPosition, wxDefaultSize, 0 )
+    item30.AddWindow( item35, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item31 = wxTextCtrl( parent, ID_PUBLICLINK, "", wxDefaultPosition, wxSize(80,-1), 0 )
-    item25.AddWindow( item31, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item36 = wxTextCtrl( parent, ID_PUBLICLINK, "", wxDefaultPosition, wxSize(80,-1), 0 )
+    item30.AddWindow( item36, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item32 = wxStaticText( parent, ID_TEXT, "Fetch how often", wxDefaultPosition, wxDefaultSize, 0 )
-    item25.AddWindow( item32, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item37 = wxStaticText( parent, ID_TEXT, "Fetch how often", wxDefaultPosition, wxDefaultSize, 0 )
+    item30.AddWindow( item37, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item33 = wxChoice( parent, ID_HOWOFTEN, wxDefaultPosition, wxSize(100,-1), 
+    item38 = wxChoice( parent, ID_HOWOFTEN, wxDefaultPosition, wxSize(100,-1), 
         ["ChoiceItem","30m","1h","2h","3h ","4h","5h","6h","8h","12h","18h","24h","48h","72h"] , 0 )
-    item25.AddWindow( item33, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item30.AddWindow( item38, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item34 = wxStaticText( parent, ID_TEXT, "Options", wxDefaultPosition, wxDefaultSize, 0 )
-    item25.AddWindow( item34, 0, wxALL, 5 )
+    item39 = wxStaticText( parent, ID_TEXT, "Options", wxDefaultPosition, wxDefaultSize, 0 )
+    item30.AddWindow( item39, 0, wxALL, 5 )
 
-    item35 = wxFlexGridSizer( 0, 2, 0, 0 )
-    item35.AddGrowableCol( 0 )
-    item35.AddGrowableCol( 1 )
+    item40 = wxFlexGridSizer( 0, 2, 0, 0 )
+    item40.AddGrowableCol( 0 )
+    item40.AddGrowableCol( 1 )
     
-    item36 = wxCheckBox( parent, ID_CHECKFORREDIRECTED, "Check for redirected URLs", wxDefaultPosition, wxDefaultSize, 0 )
-    item35.AddWindow( item36, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item41 = wxCheckBox( parent, ID_CHECKFORREDIRECTED, "Check for redirected URLs", wxDefaultPosition, wxDefaultSize, 0 )
+    item40.AddWindow( item41, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item37 = wxCheckBox( parent, ID_FIXUMLAUTS, "Fix Ümläuts", wxDefaultPosition, wxDefaultSize, 0 )
-    item35.AddWindow( item37, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item42 = wxCheckBox( parent, ID_FIXUMLAUTS, "Fix Ümläuts", wxDefaultPosition, wxDefaultSize, 0 )
+    item40.AddWindow( item42, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item38 = wxCheckBox( parent, ID_EXTRACTLTD, "Extract Link and Title from Description", wxDefaultPosition, wxDefaultSize, 0 )
-    item35.AddWindow( item38, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxBOTTOM, 5 )
+    item43 = wxCheckBox( parent, ID_EXTRACTLTD, "Extract Link and Title from Description", wxDefaultPosition, wxDefaultSize, 0 )
+    item40.AddWindow( item43, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxBOTTOM, 5 )
 
-    item39 = wxCheckBox( parent, ID_REMOVEMARKUP, "Remove Markup", wxDefaultPosition, wxDefaultSize, 0 )
-    item35.AddWindow( item39, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxBOTTOM, 5 )
+    item44 = wxCheckBox( parent, ID_REMOVEMARKUP, "Remove Markup", wxDefaultPosition, wxDefaultSize, 0 )
+    item40.AddWindow( item44, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxBOTTOM, 5 )
 
-    item25.AddSizer( item35, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+    item30.AddSizer( item40, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
-    item0.AddSizer( item25, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+    item0.AddSizer( item30, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
-    item40 = wxBoxSizer( wxHORIZONTAL )
+    item45 = wxBoxSizer( wxHORIZONTAL )
     
-    item41 = wxButton( parent, ID_REFRESH, "Refresh", wxDefaultPosition, wxDefaultSize, 0 )
-    item40.AddWindow( item41, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item46 = wxButton( parent, ID_REFRESH, "Refresh", wxDefaultPosition, wxDefaultSize, 0 )
+    item45.AddWindow( item46, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item42 = wxButton( parent, ID_KILLITEMS, "Kill Items", wxDefaultPosition, wxDefaultSize, 0 )
-    item40.AddWindow( item42, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item47 = wxButton( parent, ID_KILLITEMS, "Kill Items", wxDefaultPosition, wxDefaultSize, 0 )
+    item45.AddWindow( item47, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item0.AddSizer( item40, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item0.AddSizer( item45, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item43 = wxStaticLine( parent, ID_LINE, wxDefaultPosition, wxSize(20,-1), wxLI_HORIZONTAL )
-    item0.AddWindow( item43, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+    item48 = wxStaticLine( parent, ID_LINE, wxDefaultPosition, wxSize(20,-1), wxLI_HORIZONTAL )
+    item0.AddWindow( item48, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
-    item44 = wxBoxSizer( wxHORIZONTAL )
+    item49 = wxBoxSizer( wxHORIZONTAL )
     
-    item45 = wxButton( parent, ID_REMOVESERVICE, "Remove Service", wxDefaultPosition, wxDefaultSize, 0 )
-    item44.AddWindow( item45, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item50 = wxButton( parent, ID_REMOVESERVICE, "Remove Service", wxDefaultPosition, wxDefaultSize, 0 )
+    item49.AddWindow( item50, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item44.AddSpacer( 20, 20, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item49.AddSpacer( 20, 20, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item46 = wxButton( parent, wxID_CANCEL, "Cancel", wxDefaultPosition, wxDefaultSize, 0 )
-    item44.AddWindow( item46, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item51 = wxButton( parent, wxID_CANCEL, "Cancel", wxDefaultPosition, wxDefaultSize, 0 )
+    item49.AddWindow( item51, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item47 = wxButton( parent, wxID_OK, "OK", wxDefaultPosition, wxDefaultSize, 0 )
-    item44.AddWindow( item47, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item52 = wxButton( parent, wxID_OK, "OK", wxDefaultPosition, wxDefaultSize, 0 )
+    item49.AddWindow( item52, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item0.AddSizer( item44, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+    item0.AddSizer( item49, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+
+    if set_sizer == true:
+        parent.SetAutoLayout( true )
+        parent.SetSizer( item0 )
+        if call_fit == true:
+            item0.Fit( parent )
+            item0.SetSizeHints( parent )
+    
+    return item0
+
+
+def ServiceListFunc( parent, call_fit = true, set_sizer = true ):
+    item0 = wxBoxSizer( wxVERTICAL )
+    
+    item1 = wxBoxSizer( wxVERTICAL )
+    
+    item2 = wxListCtrl( parent, ID_SERVICELIST, wxDefaultPosition, wxSize(160,120), wxLC_REPORT|wxSUNKEN_BORDER )
+    item1.AddWindow( item2, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+
+    item0.AddSizer( item1, 0, wxALIGN_CENTRE|wxALL, 5 )
 
     if set_sizer == true:
         parent.SetAutoLayout( true )
@@ -579,9 +618,9 @@ def ServiceDialogFunc( parent, call_fit = true, set_sizer = true ):
 
 # Menubar functions
 
-ID_PREFERENCES = 10051
-ID_File = 10052
-ID_HELP = 10053
+ID_PREFERENCES = 10054
+ID_File = 10055
+ID_HELP = 10056
 
 def MenuBarFunc():
     item0 = wxMenuBar()
@@ -597,7 +636,7 @@ def MenuBarFunc():
 
 # Toolbar functions
 
-ID_TOOL = 10054
+ID_TOOL = 10057
 
 def MainToolBarFunc( parent ):
     parent.SetMargins( [2,2] )

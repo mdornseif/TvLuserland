@@ -164,22 +164,6 @@
         <object class="sizeritem">
             <flag>wxGROW|wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
             <border>5</border>
-            <object class="wxTreeCtrl" name="ID_SERVICETREE">
-                <size>120,160</size>
-                <style>wxTR_HAS_BUTTONS|wxTR_LINES_AT_ROOT|wxNO_BORDER</style>
-            </object>
-        </object>
-        <object class="sizeritem">
-            <flag>wxGROW|wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
-            <border>5</border>
-            <object class="wxStaticLine" name="ID_LINE">
-                <size>-1,20</size>
-                <style>wxLI_VERTICAL</style>
-            </object>
-        </object>
-        <object class="sizeritem">
-            <flag>wxGROW|wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
-            <border>5</border>
             <object class="wxBoxSizer">
                 <orient>wxVERTICAL</orient>
                 <object class="sizeritem">
@@ -187,6 +171,20 @@
                     <border>5</border>
                     <object class="wxBoxSizer">
                         <orient>wxHORIZONTAL</orient>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTRE|wxALL</flag>
+                            <border>5</border>
+                            <object class="wxButton" name="ID_SERVICELIST">
+                                <label>Service List</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTRE|wxALL</flag>
+                            <border>5</border>
+                            <object class="wxButton" name="ID_NEWSERVICE">
+                                <label>New Service</label>
+                            </object>
+                        </object>
                         <object class="sizeritem">
                             <flag>wxALIGN_CENTRE|wxALL</flag>
                             <border>5</border>
@@ -969,6 +967,44 @@
                 <object class="sizeritem">
                     <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
                     <border>5</border>
+                    <object class="wxFlexGridSizer">
+                        <cols>2</cols>
+                        <rows>0</rows>
+                        <vgap>0</vgap>
+                        <hgap>0</hgap>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_TEXT">
+                                <label>Title</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_TITLE">
+                                <label>-unset-</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_TEXT">
+                                <label>Link</label>
+                            </object>
+                        </object>
+                        <object class="sizeritem">
+                            <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                            <border>5</border>
+                            <object class="wxStaticText" name="ID_LINK">
+                                <label>-unset-</label>
+                            </object>
+                        </object>
+                    </object>
+                </object>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                    <border>5</border>
                     <object class="wxTextCtrl" name="ID_CHANNELINFO">
                         <size>180,100</size>
                         <style>wxTE_MULTILINE</style>
@@ -1174,6 +1210,27 @@
                     <border>5</border>
                     <object class="wxButton" name="wxID_OK">
                         <label>OK</label>
+                    </object>
+                </object>
+            </object>
+        </object>
+    </object>
+</object>
+
+<object class="wxPanel" name="ServiceListFunc">
+    <object class="wxBoxSizer">
+        <orient>wxVERTICAL</orient>
+        <object class="sizeritem">
+            <flag>wxALIGN_CENTRE|wxALL</flag>
+            <border>5</border>
+            <object class="wxBoxSizer">
+                <orient>wxVERTICAL</orient>
+                <object class="sizeritem">
+                    <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                    <border>5</border>
+                    <object class="wxListCtrl" name="ID_SERVICELIST">
+                        <size>160,120</size>
+                        <style>wxLC_REPORT|wxSUNKEN_BORDER</style>
                     </object>
                 </object>
             </object>

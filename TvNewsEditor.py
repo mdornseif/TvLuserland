@@ -71,21 +71,22 @@ class EditPostDialog(wxDialog):
         # add preview if possible
         if "link" in item:
             startAsyncFunc(self, urllib.urlopen, (item["link"]))
-
-            if wxPlatform == "__WXMSW__":
-                self.html = wxIEHtmlWin(self, -1, size=wxDLG_SZE(self, 300, 100), style = wxNO_FULL_REPAINT_ON_RESIZE|wxSUNKEN_BORDER)
-                self.html.Navigate(item["link"])
-                # Hook up the event handlers for the IE window
-                EVT_MSHTML_BEFORENAVIGATE2(self, -1, self.OnBeforeNavigate2)
-                EVT_MSHTML_NEWWINDOW2(self, -1, self.OnNewWindow2)
-                EVT_MSHTML_DOCUMENTCOMPLETE(self, -1, self.OnDocumentComplete)
-                EVT_MSHTML_TITLECHANGE(self, -1, self.OnTitleChange)
-            else:
-                self.html = wxHtmlWindow(self, -1, size=wxDLG_SZE(self, 300, 100),
-                                         style=wxSUNKEN_BORDER)
+            if tv.config.get('ui.autopreview'):
+                if wxPlatform == "__WXMSW__":
+                    self.html = wxIEHtmlWin(self, -1, size=wxDLG_SZE(self, 300, 100), style = wxNO_FULL_REPAINT_ON_RESIZE|wxSUNKEN_BORDER)
+                    self.html.Navigate(item["link"])
+                    # Hook up the event handlers for the IE window
+                    EVT_MSHTML_BEFORENAVIGATE2(self, -1, self.OnBeforeNavigate2)
+                    EVT_MSHTML_NEWWINDOW2(self, -1, self.OnNewWindow2)
+                    EVT_MSHTML_DOCUMENTCOMPLETE(self, -1, self.OnDocumentComplete)
+                    EVT_MSHTML_TITLECHANGE(self, -1, self.OnTitleChange)
+                else:
+                    # Wxhtml seems to have problems if multiple windows are rendered. check this.
+                    self.html = wxHtmlWindow(self, -1, size=wxDLG_SZE(self, 300, 100),
+                                             style=wxSUNKEN_BORDER)
                 self.html.SetPage("<html><body>loading page ...</body></center>")
-            self.previewsizer.Add(self.html, 1, wxEXPAND)
-            print self.html
+                self.previewsizer.Add(self.html, 1, wxEXPAND)
+                print self.html
 
         # add categories
         self.categories = []
@@ -165,10 +166,11 @@ class EditPostDialog(wxDialog):
         if link != self.item.get("link", "").strip():
             if self.item.get("link", "").strip() == self.GetPostlink().GetValue():
                 self.GetPostlink().SetValue(link)
-        if wxPlatform == "__WXMSW__":
-            pass
-        else:
-            self.html.SetPage(url.read())
+        if tv.config.get('ui.autopreview'):
+            if wxPlatform == "__WXMSW__":
+                pass
+            else:
+                self.html.SetPage(url.read())
         
         
     def OnPost(self, event):
@@ -203,6 +205,7 @@ class EditPostDialog(wxDialog):
         self.Show(FALSE)
 
         # delete posting
+        # XXX: Test if user want'S killing after posting.
         if self.killfunc:
             self.killfunc()
         

@@ -6,7 +6,7 @@
 # Copyright:    nope
 #----------------------------------------------------------------------------
 
-__rcsid__ = "$Id: TvLuserland.py,v 1.3 2002/10/31 22:35:09 drt Exp $"
+__rcsid__ = "$Id: TvLuserland.py,v 1.4 2002/11/03 21:24:59 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
@@ -15,7 +15,6 @@ from TvLuserland_wdr import *
 
 from TvNewsPane import *
 from TvNewsEditor import *
-from TvConfig import *
 
 from pprint import pprint
 
@@ -47,21 +46,23 @@ class TvMainFrame(wxFrame):
         ReadNewsFunc(self)
 
         # examples
-        t = self.GetServicetree()
-        r = t.AddRoot("Root")
-        t.SetPyData(r, None)
-        c = t.AppendItem(r, "Alle Services")
-        t.SetPyData(c, None)
-        c = t.AppendItem(r, "Services nach Name")
-        t.SetPyData(c, None)
-        c = t.AppendItem(r, "Services nach URL")
-        t.SetPyData(c, None)
-        for x in tv.aggregator.db.services.getservicelist():
-            t.AppendItem(c, x)
-        c = t.AppendItem(r, "Sonstwas")
-        t.SetPyData(c, None)
+        #t = self.GetServicetree()
+        #r = t.AddRoot("Root")
+        #t.SetPyData(r, None)
+        #c = t.AppendItem(r, "Alle Services")
+        #t.SetPyData(c, None)
+        #c = t.AppendItem(r, "Services nach Name")
+        #t.SetPyData(c, None)
+        #c = t.AppendItem(r, "Services nach URL")
+        #t.SetPyData(c, None)
+        #for x in tv.aggregator.db.services.getsubscriptions():
+        #    t.AppendItem(c, x)
+        #c = t.AppendItem(r, "Sonstwas")
+        #t.SetPyData(c, None)
 
         # WDR: handler declarations for TvMainFrame
+        EVT_BUTTON(self, ID_NEWSERVICE, self.OnNewservice)
+        EVT_BUTTON(self, ID_SERVICELIST, self.OnServicelist)
         EVT_BUTTON(self, ID_REFRESH, self.OnRefresh)
         EVT_BUTTON(self, ID_NEWPOST, self.OnNewpost)
         EVT_MENU(self, wxID_ABOUT, self.OnAbout)
@@ -72,6 +73,12 @@ class TvMainFrame(wxFrame):
 
     # WDR: methods for TvMainFrame
     
+    def GetServicelist(self):
+        return wxPyTypeCast( self.FindWindowById(ID_SERVICELIST), "wxButton" )
+
+    def GetNewservice(self):
+        return wxPyTypeCast( self.FindWindowById(ID_NEWSERVICE), "wxButton" )
+
     def GetItemscroller(self):
         return wxPyTypeCast( self.FindWindowById(ID_NEWSPANE), "wxScrolledWindow" )
 
@@ -109,6 +116,18 @@ class TvMainFrame(wxFrame):
     
     # WDR: handler implementations for TvMainFrame
     
+    def OnNewservice(self, event):
+        import TvNewService
+        TvNewService.NewService(self)
+        
+
+    def OnServicelist(self, event):
+        import TvServiceList
+        dialog = TvServiceList.ServiceList(self)
+        dialog.CentreOnParent()
+        dialog.Show()
+        
+
     def OnRefresh(self, event):
         self.GetItemscroller().refresh()
 
@@ -118,7 +137,8 @@ class TvMainFrame(wxFrame):
         dialog.Show()
         
     def OnPreferences(self, event):
-        dialog = ConfigDialog(self, -1)
+        import TvConfig 
+        dialog = TvConfigConfigDialog(self, -1)
         dialog.CentreOnParent()
         dialog.ShowModal()
         dialog.Destroy()

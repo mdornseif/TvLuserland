@@ -1,0 +1,14 @@
+.*pyc
+*.pyc
+db
+old
+tv/__init__.pyc
+tv/__init__.pyc
+tv/__init__.pyc
+tv/aggregator/__init__.pyc
+tv/aggregator/db/__init__.pyc
+tv/aggregator/db/items/__init__.pyc
+tv/aggregator/db/services/__init__.pyc
+tv/config/__init__.pyc
+tv/weblog/__init__.pyc
+tv/weblog/metaWeblog.pyc

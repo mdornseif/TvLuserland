@@ -1,6 +1,6 @@
 #!/bin/env python
 
-__rcsid__ = "$Id: TvService.py,v 1.1 2002/11/01 08:55:10 drt Exp $"
+__rcsid__ = "$Id: TvService.py,v 1.2 2002/11/03 21:24:59 drt Exp $"
 
 from pprint import pformat
 
@@ -24,10 +24,16 @@ class ServiceDialog(wxDialog):
         self.GetLastnewitem().SetLabel(str(feedinfo.get("TVlastnewitem", "- unknown -")))
         self.GetItemsfetched().SetLabel(str(feedinfo.get("TVitemsfetched", "- unknown -")))
         self.GetLastrequest().SetLabel(str(feedinfo.get("TVlastfetched", "- unknown -")))
+        self.GetTitle().SetLabel(str(feedinfo.get("title", "- unknown -")))
+        self.GetLink().SetLabel(str(feedinfo.get("link", "- unknown -")))
         self.GetChannelinfo().SetValue(pformat(feedinfo))
-        self.GetPublicname().SetValue(config.get("publicname", ""))
-        self.GetPrivatename().SetValue(feedinfo.get("privatename", ""))
-        self.GetPubliclink().SetValue(feedinfo.get("publiclink", ""))
+        self.GetPublicname().SetValue(config.get("publicname", feedinfo.get("title", "")))
+        self.GetPrivatename().SetValue(config.get("privatename", config.get("publicname", feedinfo.get("title", ""))))
+        self.GetPubliclink().SetValue(config.get("publiclink", feedinfo.get("link", "")))
+
+        # this should be async and on idle
+        self.GetUnreaditems().SetLabel(str(tv.aggregator.db.items.getnrofunreaditemsforsource(self.serviceurl)))
+
         #{         'TVetag': None,
         # 'description': ' (powered by http://www.newsisfree.com/syndicate.php - FOR PERSONAL AND NON COMMERCIAL USE ONLY!)',
         # 'language': 'en',
@@ -39,11 +45,20 @@ class ServiceDialog(wxDialog):
         #          'creator': 'mkrus@newsisfree.com'}
         
         # WDR: handler declarations for ServiceDialog
+        #EVT_LEFT_UP(self, self.OnLink)
+        EVT_BUTTON(self, ID_KILLITEMS, self.OnKillitems)
+        EVT_BUTTON(self, ID_REFRESH, self.OnDorefresh)
         EVT_BUTTON(self, ID_REMOVESERVICE, self.OnRemove)
         EVT_BUTTON(self, wxID_OK, self.OnOk)
         EVT_IDLE(self, self.OnIdle)
 
     # WDR: methods for ServiceDialog
+
+    def GetLink(self):
+        return wxPyTypeCast( self.FindWindowById(ID_LINK), "wxStaticText" )
+
+    def GetTitle(self):
+        return wxPyTypeCast( self.FindWindowById(ID_TITLE), "wxStaticText" )
 
     def GetHowoften(self):
         return wxPyTypeCast( self.FindWindowById(ID_HOWOFTEN), "wxChoice" )
@@ -97,6 +112,19 @@ class ServiceDialog(wxDialog):
         return true
 
     # WDR: handler implementations for ServiceDialog
+
+    def OnLink(self, event):
+        print "link klicked"
+        pass
+
+    def OnKillitems(self, event):
+        tv.aggregator.db.items.deleteallitemsfromsource(self.serviceurl)
+        # XXX: update statistics
+        # inform newspane
+
+    def OnDorefresh(self, event):
+        print "refresh klicked"
+        pass
 
     def OnRemove(self, event):
         tv.aggregator.db.services.unsubscribe(self.serviceurl)
