@@ -13,3 +13,5 @@ tv/aggregator/db/services/__init__.pyc
 tv/config/__init__.pyc
 tv/weblog/__init__.pyc
 tv/weblog/metaWeblog.pyc
+tv/aggregator/parsers/*.pyc
+tv/weblog/db/*.pyc
