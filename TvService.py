@@ -1,8 +1,9 @@
 #!/bin/env python
 
-__rcsid__ = "$Id: TvService.py,v 1.2 2002/11/03 21:24:59 drt Exp $"
+__rcsid__ = "$Id: TvService.py,v 1.3 2002/11/04 22:46:51 drt Exp $"
 
 from pprint import pformat
+import time
 
 from wxPython.wx import *
 from TvLuserland_wdr import *
@@ -21,28 +22,20 @@ class ServiceDialog(wxDialog):
         service = tv.aggregator.db.services.getservice(serviceurl)
         feedinfo = service["feedinfo"]
         config = service["config"]
-        self.GetLastnewitem().SetLabel(str(feedinfo.get("TVlastnewitem", "- unknown -")))
-        self.GetItemsfetched().SetLabel(str(feedinfo.get("TVitemsfetched", "- unknown -")))
-        self.GetLastrequest().SetLabel(str(feedinfo.get("TVlastfetched", "- unknown -")))
-        self.GetTitle().SetLabel(str(feedinfo.get("title", "- unknown -")))
+        self.SetLabelAndResize(self.GetTitle(), feedinfo.get("title", "- unknown -"))
         self.GetLink().SetLabel(str(feedinfo.get("link", "- unknown -")))
-        self.GetChannelinfo().SetValue(pformat(feedinfo))
         self.GetPublicname().SetValue(config.get("publicname", feedinfo.get("title", "")))
         self.GetPrivatename().SetValue(config.get("privatename", config.get("publicname", feedinfo.get("title", ""))))
         self.GetPubliclink().SetValue(config.get("publiclink", feedinfo.get("link", "")))
-
-        # this should be async and on idle
-        self.GetUnreaditems().SetLabel(str(tv.aggregator.db.items.getnrofunreaditemsforsource(self.serviceurl)))
-
-        #{         'TVetag': None,
-        # 'description': ' (powered by http://www.newsisfree.com/syndicate.php - FOR PERSONAL AND NON COMMERCIAL USE ONLY!)',
-        # 'language': 'en',
-        # 'TVsourceurl': 'http://www.newsisfree.com/rss/60425ebaffc7cb6c5e746ed8c9181178/',
-        # 'title': 'Powered by News Is Free',
-        # 'TVmodified': (2002, 10, 29, 21, 7, 32, 1, 302, 0),
-        # 'link': 'http://www.newsisfree.com/sources/info/1873/', 'TVcreated': <DateTime object for '2002-10-24 22:21:09.95' at 39d1520>,
-        # 'date': '10/29/02 21:41 CET',
-        #          'creator': 'mkrus@newsisfree.com'}
+        howoften = config.get("fetchhowoften", 60)
+        if howoften / 60  >= 1:
+            howoften = "%dh" % int(howoften/60)
+        else:
+            howoften = "%dm" % howoften
+        self.GetHowoften().SetStringSelection(howoften)
+        self.GetCheckforredirected().SetValue(config.get("checkforredirected", 0))
+        
+        self.UpdateFeedinfo()
         
         # WDR: handler declarations for ServiceDialog
         #EVT_LEFT_UP(self, self.OnLink)
@@ -55,7 +48,8 @@ class ServiceDialog(wxDialog):
     # WDR: methods for ServiceDialog
 
     def GetLink(self):
-        return wxPyTypeCast( self.FindWindowById(ID_LINK), "wxStaticText" )
+        return self.FindWindowById(ID_LINK)
+        # return wxPyTypeCast( self.FindWindowById(ID_LINK), "wxStaticText" )
 
     def GetTitle(self):
         return wxPyTypeCast( self.FindWindowById(ID_TITLE), "wxStaticText" )
@@ -111,6 +105,30 @@ class ServiceDialog(wxDialog):
     def Validate(self, win):
         return true
 
+    def SetLabelAndResize(self, control, label):
+        control.SetLabel(str(label))
+        control.SetSize(self.GetLastnewitem().GetBestSize())
+        control.GetContainingSizer().SetItemMinSize(control,
+                                                 control.GetSize().GetWidth(),
+                                                 control.GetSize().GetHeight())
+        control.GetContainingSizer().Layout()
+
+    def UpdateFeedinfo(self):
+        feedinfo = tv.aggregator.db.services.getfeedinfo(self.serviceurl)
+        self.SetLabelAndResize(self.GetLastnewitem(), feedinfo.get("TVlastnewitem", "- unknown -"))
+        self.SetLabelAndResize(self.GetItemsfetched(), feedinfo.get("TVitemsfetched", "- unknown -"))
+        self.SetLabelAndResize(self.GetLastrequest(), feedinfo.get("TVlastfetched", "- unknown -"))
+        self.SetLabelAndResize(self.GetErrors(), feedinfo.get("TVerrors", "- unknown -"))
+        self.SetLabelAndResize(self.GetLasterror(), feedinfo.get("TVlasterror", "- unknown -"))
+        self.SetLabelAndResize(self.GetLasterrortext(), feedinfo.get("TVlasterrortext", "- unknown -"))
+        cleanFeedinfo = {}
+        for k, v in feedinfo.items():
+            if not k.startswith("TV"):
+                cleanFeedinfo[k] = v
+        self.GetChannelinfo().SetValue("%r =\n%s" % (self.serviceurl, pformat(cleanFeedinfo)))
+        self.SetLabelAndResize(self.GetUnreaditems(), tv.aggregator.db.items.getnrofunreaditemsforsource(self.serviceurl))
+        self._lastupdate = time.time()
+
     # WDR: handler implementations for ServiceDialog
 
     def OnLink(self, event):
@@ -119,8 +137,8 @@ class ServiceDialog(wxDialog):
 
     def OnKillitems(self, event):
         tv.aggregator.db.items.deleteallitemsfromsource(self.serviceurl)
-        # XXX: update statistics
-        # inform newspane
+        self.UpdateFeedinfo()
+        # XXX: inform newspane
 
     def OnDorefresh(self, event):
         print "refresh klicked"
@@ -129,8 +147,10 @@ class ServiceDialog(wxDialog):
     def OnRemove(self, event):
         tv.aggregator.db.services.unsubscribe(self.serviceurl)
         self.OnOk(event)
-        
+    
     def OnIdle(self, event):
+        if self._lastupdate + 10 < time.time():
+            self.UpdateFeedinfo()            
         event.Skip(true)
 
     def OnOk(self, event):
@@ -146,13 +166,19 @@ class ServiceDialog(wxDialog):
             config["publicname"] = config["privatename"]
         if config["privatename"] == "" and config["publicname"] != "":
             config["privatename"] = config["publicname"]
-        #config["fetchhowoften"]
+        howoften = self.GetHowoften().GetStringSelection()
+        if howoften.endswith('m'):
+            config["fetchhowoften"] = int(howoften[:-1])
+        elif howoften.endswith('h'):
+            config["fetchhowoften"] = int(howoften[:-1]) * 60
+        else:
+          print "unknown choice"
+        config["checkforredirected"] = self.GetCheckforredirected().GetValue()
+
         tv.aggregator.db.services.saveconfig(self.serviceurl, config)
 
-        #howoften = self.GetHowoften().GetString()
-        howoften = self.GetHowoften().GetStringSelection()
         print howoften, config["publiclink"], config["publicname"], config["privatename"]
         self.Show(FALSE)
-
+        self.Destroy()
 
 
