@@ -1,10 +1,9 @@
-__rcsid__ = "$Id: TvNewsPane.py,v 1.10 2002/11/14 15:48:45 drt Exp $"
+__rcsid__ = "$Id: TvNewsPane.py,v 1.11 2002/12/23 18:58:58 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
 
 from TvNewsEditor import *
-from TvService import *
 
 from TvLuserland_wdr import *
 
@@ -63,7 +62,7 @@ class NewsItem(wxPanel):
         self.SetLabelAndResize(self.GetTitle(), item.get("title", ""))
         self.GetLink().SetLabel(item.get("link", ""))
         self.SetLabelAndResize(self.GetDate(), str(item.get("TVdateobject", ""))[:-3])
-        self.GetSource().SetLabel(tv.aggregator.db.services.getconfig(item["TVsourceurl"]).get("privatename", ""))
+        self.GetSource().SetLabel(tv.aggregator.db.services.getfeedconfig(item["TVsourceurl"]).get("privatename", ""))
  
         # WDR: handler declarations for NewsItem
         EVT_BUTTON(self, ID_SOURCE, self.OnSource)
@@ -112,7 +111,8 @@ class NewsItem(wxPanel):
     # WDR: handler implementations for NewsItem
 
     def OnSource(self, event):
-        dialog = ServiceDialog(self.parent, self.item.get("TVsourceurl"))
+        import TvService 
+        dialog = TvService.ServiceDialog(self.parent, self.item.get("TVsourceurl"))
         dialog.Show()
 
     def OnEdit(self, event):
@@ -121,7 +121,6 @@ class NewsItem(wxPanel):
 
     def OnKill(self, event):
         self.parent.removeItem(self.GetId(), self.item)
-        self.Destroy()
 
     def OnSize(self, event):
         # XXX
@@ -135,7 +134,6 @@ class TvNewsPane(wxScrolledWindow):
                                   style = wxTAB_TRAVERSAL|wxSIMPLE_BORDER)
 
 
-        from pprint import pprint
         # XXX: a weak reference might be better
         self.displayed_items = []
         #self.panel = wxPanel(self, -1)
@@ -178,6 +176,7 @@ class TvNewsPane(wxScrolledWindow):
         tv.aggregator.db.items.deleteitem(item['guid'])
         # remove window
         self.sizer.Remove(self.FindWindowById(cId))
+        wxCallAfter(self.FindWindowById(cId).Destroy)
         self.fixlayout()
         
     def removeAllItems(self):

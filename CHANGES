@@ -1,4 +1,17 @@
-* Database format changet - you might see dupes if upgrading
+* You can set now the date of a posting - but radio needs to be hacked to support this.
+* Service name is now shwn in the Posting Dialog - by klicking 
+  on this you can get to the service configuration
+* Links containing '&' where shown wrong in the GUI
+* servicedb is faster now - especially generation of services.opml
+* rssfetch now runs in a loop
+* rssfetch respects how ofen you want to fetch certain feeds, just start 
+  it every 5 minutes, it wouldn't harass websites anymore.
+* rssfetch uses last modified and etag http headers.
+
+Thu Nov 14 16:47:54 CET 2002
+* Newspanel shows numer of unread ites in the statusbar
+* Scrollbar is no longer overwirtten in news panel
+* Database format changed - you might see dupes if upgrading
 * Kill button in post dialog stopps jumping arround when posting
 * Servicelist shows a bit more information
 * Items in Newspanel now show their date

@@ -1,6 +1,6 @@
 # Try using cPickle and cStringIO if available.
 
-__rcsid__ = "$Id: __init__.py,v 1.6 2002/11/14 15:48:45 drt Exp $"
+__rcsid__ = "$Id: __init__.py,v 1.7 2002/12/23 18:58:58 drt Exp $"
 
 try:
     from cPickle import load, dump, loads, dumps
@@ -28,12 +28,6 @@ def init():
     global _dupedb, _dupetitledb, _dupelinkdb, _dupedescriptiondb, _itemdb, _itembysourcedb, _itembydatedb, _sourcedb, _deletedb
 
     # init dupedb
-    #try:
-    #    fp = open(os.path.join(tv.config.get("fs.dbdir"), "items.dupedb.pickle"), 'r')
-    #    _dupedb = load(fp)
-    #    fp.close()
-    #except:
-    #    _dupedb = {} 
     _dupedb = db.DB(_dbenv)
     _dupedb.open("dupes",   
                  dbtype = db.DB_BTREE,
@@ -121,25 +115,31 @@ def getitemsBySource(sourceurl, maxitems = 0xffffffffffL):
     cur.close()
     return ret
 
-def getitemsByDate(startdate = mx.DateTime.now(), maxitems = 50):
+def getitemsByDate(startdate = mx.DateTime.now(), maxitems = 50, upwards = 1):
     ret = []
     cur = _itembydatedb.cursor()
     try:
         rec = cur.set_range(str(startdate))
     except db.DBNotFoundError:
         # this usually means that there is no newer element in the db, so start with the last one.
-        rec = cur.last()
+        if upwards:
+            rec = cur.first()
+        else:
+            rec = cur.last()
     while rec:
         if len(ret) >= maxitems:
             break
         ret.append(getitem(rec[1]))
-        rec = cur.prev()
+        if upwards:
+            rec = cur.next()
+        else:
+            rec = cur.prev()
     return ret
 
 
 def saveitem(item):
     d = dumps(item)
-    _itemdb.put(key=item["guid"], data=d, flags=db.DB_NOOVERWRITE)
+    _itemdb.put(key=item["guid"], data=d)#, flags=db.DB_NOOVERWRITE)
     _itembysourcedb.put(item["TVsourceurl"], item["guid"])
     _itembydatedb.put(key=str(item["TVdateobject"]), data=item["guid"])
 
@@ -182,11 +182,12 @@ def deleteitem(guid, date = None, sourceurl = None):
 def deleteitemfromdate_iterating(guid):
     # something strange happened, we couldn't find this posting. We do
     # a full DB scan to find it's guid and remove it. ugly but effective.
+    print guid
     cur = _itembydatedb.cursor()
     for k, v in _itembydatedb.items():
         if v == guid:
-            rec = cur.set_both(k, guid)
-            print "removing", k, guid, rec
+            print "removing", k, guid
+            rec = cur.set_both(k, v)
             if rec:
                 cur.delete() 
     cur.close()
@@ -257,4 +258,26 @@ def checkdupe(item):
             _dupedescriptiondb.put(key=md5.new(item["description"]).digest(), data=item["guid"])
     return ret
 
+def applydeletelog():
+    dlist = {}
+    for x in _deletedb.values():
+        dlist[x] = 1
+    for k, v in _itembydatedb.items():
+        if v in dlist:
+            print v
+            deleteitem(v)
+
+def removeunreaddupes():
+    cur = _itembydatedb.cursor()
+    seenguids = {}
+    for k, v in _itembydatedb.items():
+        if v in seenguids:
+            rec = cur.set_both(k, v)
+            print "removing", k, v, rec
+            if rec:
+                cur.delete() 
+        else:
+            seenguids[v] = 1
+    cur.close()
+    
 init()

@@ -2,7 +2,7 @@
 
 
 
-__rcsid__ = "$Id: rssfetch.py,v 1.7 2002/11/14 15:48:45 drt Exp $"
+__rcsid__ = "$Id: rssfetch.py,v 1.8 2002/12/23 18:58:58 drt Exp $"
 
 import rssparser
 import random
@@ -350,13 +350,16 @@ def fixItem(item, sourceurl, service = {}):
 
 def fixService(service = {}, etag = None, modified = None):
     service["TVetag"] = etag
-    service["TVmodified"] = modified
+    if modified == None and "TVmodified" in service:
+        del(service["TVmodified"])
+    elif modified is not None:
+        service["TVmodified"] = mx.DateTime.mktime(modified)
     service["TVlastfetched"] = mx.DateTime.now()
     if "TVcreated" not in service:
         service["TVcreated"] = mx.DateTime.now()
     return service
 
-if __name__ == '__main__':
+def main():
     import sys
     if sys.argv[1:]:
         urls = sys.argv[1:]
@@ -371,8 +374,16 @@ if __name__ == '__main__':
         print url
         print "->",
         sys.stdout.flush()
-        service = tv.aggregator.db.services.getfeedinfo(url)
-        result = rssparser.parse(url)
+        service, feedconfig = tv.aggregator.db.services.getserviceinfoandconfig(url)
+        #pprint((service, feedconfig))
+        if mx.DateTime.now() < service.get("TVlastfetched", mx.DateTime.DateTime(0)) + mx.DateTime.TimeDelta(minutes=feedconfig.get("fetchhowoften", 60)):
+            print "will wait until at least %s for next fetch (%d minutes after last fetch)" % (service.get("TVlastfetched") + mx.DateTime.TimeDelta(minutes=feedconfig.get("fetchhowoften", 60)), feedconfig.get("fetchhowoften", 60))
+            continue
+        if "TVmodified" in service:
+            modified = service["TVmodified"].tuple()
+        else:
+            modified = None
+        result = rssparser.parse(url, etag=service.get("TVetag"), modified=modified)
         service.update(result["channel"])
         fixService(service, result.get("etag"), result.get("modified"))
         for x in result["items"]:
@@ -395,3 +406,9 @@ if __name__ == '__main__':
         
     #tv.aggregator.db.items.save()
     #tv.aggregator.db.items.getitemsByDate("2002-10-22 12:53:27.15", 2)
+
+if __name__ == '__main__':
+    while 1:
+        import time
+        main()
+        time.sleep(222)

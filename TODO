@@ -1,6 +1,8 @@
+* http://www.myelin.co.nz/ecosystem/ http://diveintomark.org/newdoor/ http://diveintomark.org/cgi-bin/neighborhood.cgi blogroll.py http://www.pipetree.com/qmacro/2002/Jun/4#bdexplorer http://blo.gs/related.php?id=9054 http://diveintomark.org/projects/misc/blogrollfinder.py.txt
 * neue items zum pane hinzufügen
 * items später rendern
 * deleteallitemsfromsource() wenn keine items vorhanden sind -> exception
+* KILLALL
 * postings per service merken
 * Hand Icon when over a wxLinkText
 * Newsreader View
@@ -27,7 +29,6 @@
 * Blogger 
 * Drag'n Drop - http://ranchero.com/software/netnewswire/rssclipboard.php
 * tree
-* wxLinkText schluckt Sonderzeichen, wie '&'
 * XML redirection http://radio.userland.com/howtoRedirectRss
 * Position neuer Fenster
 * chaching
@@ -50,3 +51,4 @@ Done
 * Removing Feeds is to slow
 * Show nr of unread items in toolbar
 * Beim Posten verschieben sich die Buttons
+* wxLinkText schluckt Sonderzeichen, wie '&'

@@ -1,5 +1,5 @@
 
-__rcsid__ = "$Id: ClickableText.py,v 1.3 2002/11/05 10:49:02 drt Exp $"
+__rcsid__ = "$Id: ClickableText.py,v 1.4 2002/12/23 18:58:57 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.lib.buttons import  wxGenButtonEvent
@@ -22,6 +22,7 @@ class wxClickableText(wxPyControl):
             style = wxNO_BORDER
         wxPyControl.__init__(self, parent, ID, pos, size, style, validator, name)
 
+        self.label = label
         self.downColour = wxRED
         self.up = true
 
@@ -46,6 +47,8 @@ class wxClickableText(wxPyControl):
         Sets the static text label and updates the control's size to exactly
         fit the label unless the control has wxST_NO_AUTORESIZE flag.
         """
+        # SetLabel strips the '&' character wich is a problem, so keep a copy
+        self.label = label
         wxPyControl.SetLabel(self, label)
         style = self.GetWindowStyleFlag()
         if not style & wxST_NO_AUTORESIZE:
@@ -55,6 +58,9 @@ class wxClickableText(wxPyControl):
                                                      self.GetSize().GetHeight())
 
             self.GetContainingSizer().Layout()
+            
+    def GetLabel(self):
+        return self.label
 
     def SetFont(self, font):
         """
@@ -115,6 +121,7 @@ class wxClickableText(wxPyControl):
 
 
     def DrawLabel(self, dc, width, height, dw=0, dy=0):
+        # XXX candidate for optimisation.
         dc.SetFont(self.GetFont())
         if self.IsEnabled():
             if self.up:

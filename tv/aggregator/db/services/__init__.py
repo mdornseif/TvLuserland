@@ -3,12 +3,12 @@
 Services are saved in a bsddb as a dictionary of dictionarys. the
 first level of dicionary contains items related to different parts of
 the aggregator. At the moment there are only two entries defined:
-'feedinfo' and 'config'. feedinfo is only to be written by the thread
-reading rss files from the network, 'config' is only to be written by the GUI. 
+'feedinfo' and 'feedconfig'. feedinfo is only to be written by the thread
+reading rss files from the network, 'feedconfig' is only to be written by the GUI. 
 
 """
 
-__rcsid__ = "$Id: __init__.py,v 1.7 2002/11/14 15:48:45 drt Exp $"
+__rcsid__ = "$Id: __init__.py,v 1.8 2002/12/23 18:58:58 drt Exp $"
 
 # Try using cPickle and cStringIO if available.
 try:
@@ -35,6 +35,26 @@ from tv.aggregator.db import _dbenv
 
 from tv.thirdparty import opml_parser
 
+_picklecache = {}
+
+def pickle(object):
+    global _picklecache
+
+    # trim cache:this is extremly crude
+    if len(_picklecache) > 1000:
+        _picklecache = {}
+    x = dumps(object, 1)
+    _picklecache[x] = object
+    return x
+    
+def unpickle(string):
+    global _picklecache
+    try:
+        return _picklecache[string]
+    except KeyError:
+        x = _picklecache[string] = loads(string)
+        return x
+
 def init():
     global _servicedb
 
@@ -51,65 +71,62 @@ def close():
     savesubscriptions(getsubscriptions())
     _servicedb.close()
 
-
 def getservices():
     return _servicedb.keys()
 
-    
 def getservice(sourceurl):
     d = _servicedb.get(sourceurl)
     if d:
-        data = loads(d)
-        if data.keys() != ["feedinfo", "config"] and data.keys() != ["config", "feedinfo"]:
+        data = unpickle(d)
+        if data.keys() == ["feedinfo", "config"] or data.keys() == ["config", "feedinfo"]:
             # convert old data from db
-            data = {"feedinfo": data,
-                    "config": {"publicname": data.get("title", "-none-"),
-                               "privatename": data.get("title", "-none-"),
-                               "publiclink": data.get("link"),
-                               "fetchhowoften": 60}}
+            data = {"feedinfo": data["feedinfo"],
+                    "feedconfig": data["config"]}
         # check and fix some errors
-        if "publicname" not in data["config"]:
-            data["config"]["publicname"] = data["feedinfo"].get("title", "-none-")
-        if "privatename" not in data["config"]:
-            data["config"]["privatename"] = data["config"].get("publicname", "-none-")
-        if data["config"].get("publiclink", "") == "":
-            data["config"]["publiclink"] = data["feedinfo"].get("link", "-none-" )
-            
-        return data
+        if "publicname" not in data["feedconfig"]:
+            data["feedconfig"]["publicname"] = data["feedinfo"].get("title", "-none-")
+        if "privatename" not in data["feedconfig"]:
+            data["feedconfig"]["privatename"] = data["feedconfig"].get("publicname", "-none-")
+        if data["feedconfig"].get("publiclink", "") == "":
+            data["feedconfig"]["publiclink"] = data["feedinfo"].get("link", "-none-" )
     else:
         # new entry
-        return {"feedinfo": {"TVsourceurl": sourceurl, "TVcreated": mx.DateTime.now()},
-                "config": {}}
+        data = {"feedinfo": {"TVsourceurl": sourceurl, "TVcreated": mx.DateTime.now()},
+                "feedconfig": {}}
+    return data
+
+def getserviceinfoandconfig(sourceurl):
+    x = getservice(sourceurl)
+    return (x["feedinfo"], x["feedconfig"])
 
 def getserviceflat(sourceurl):
     data = getservice(sourceurl)
     ret = data["feedinfo"]
-    ret.update(data["config"])
+    ret.update(data["feedconfig"])
     return ret
 
 def getfeedinfo(sourceurl):
     return getservice(sourceurl)["feedinfo"]
 
 
-def getconfig(sourceurl):
-    return getservice(sourceurl)["config"]
+def getfeedconfig(sourceurl):
+    return getservice(sourceurl)["feedconfig"]
 
 def saveservice(service):
-    d = dumps(service)
+    d = pickle(service)
     _servicedb.put(key=service["feedinfo"]["TVsourceurl"], data=d), # , flags=db.DB_NOOVERWRITE)    
-
 
 writelock = threading.Lock()
 
 def savefeedinfo(feedinfo):
     writelock.acquire()
-    saveservice({"feedinfo": feedinfo, "config": getconfig(feedinfo["TVsourceurl"])})
+    saveservice({"feedinfo": feedinfo, "feedconfig": getfeedconfig(feedinfo["TVsourceurl"])})
     writelock.release()
     
 
-def saveconfig(sourceurl, config):
+def savefeedconfig(sourceurl, feedconfig):
     writelock.acquire()
-    saveservice({"feedinfo": getfeedinfo(sourceurl), "config": config})
+    saveservice({"feedinfo": getfeedinfo(sourceurl), "feedconfig": feedconfig})
     writelock.release()
 
 feedinfo_cachetime = 0
@@ -138,10 +155,8 @@ def savesubscriptions(subscriptions):
     feedinfo_cacchetime = time.time()
     outlines = []
     for x in subscriptions:
-        y = getservice(x)
-        config = y["config"]
-        feedinfo = y["feedinfo"]
-        title = config.get("publicname", feedinfo.get("title", "Unknown title for: %s" % x))
+        feedinfo, feedconfig = getserviceinfoandconfig(x)
+        title = feedconfig.get("publicname", feedinfo.get("title", "Unknown title for: %s" % x))
         outlines.append('<outline title="%s" xmlUrl="%s" />' % (title.replace("&", "&amp;"), x.replace("&", "&amp;")))
 
     print "saving", time.time()

@@ -176,7 +176,7 @@
                     </object>
                 </object>
                 <object class="spacer">
-                    <option>3</option>
+                    <option>1</option>
                     <flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
                     <border>5</border>
                         <size>10,10</size>
@@ -189,7 +189,6 @@
                     </object>
                 </object>
                 <object class="spacer">
-                    <option>1</option>
                     <flag>wxALIGN_CENTRE|wxALL</flag>
                     <border>5</border>
                         <size>10,10</size>
@@ -336,6 +335,10 @@
                     <border>10</border>
                     <object class="wxStaticText" name="ID_DATE">
                         <style>wxALIGN_RIGHT</style>
+                        <font>
+                            <size>9</size>
+                            <family>swiss</family>
+                        </font>
                         <label>-unset-</label>
                     </object>
                 </object>
@@ -389,6 +392,69 @@
             <object class="wxNotebook" name="ID_CONFIGWEBLOG">
                 <usenotebooksizer>1</usenotebooksizer>
                 <size>400,300</size>
+                <object class="notebookpage">
+                    <label>User Interface</label>
+                    <object class="wxPanel" name="ConfigUiFunc">
+                        <object class="wxBoxSizer">
+                            <orient>wxVERTICAL</orient>
+                            <object class="sizeritem">
+                                <flag>wxALIGN_CENTRE|wxALL</flag>
+                                <border>5</border>
+                                <object class="wxFlexGridSizer">
+                                    <cols>2</cols>
+                                    <rows>0</rows>
+                                    <vgap>0</vgap>
+                                    <hgap>0</hgap>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="ID_TEXT">
+                                            <label>items on newspage</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_CENTRE|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxSpinCtrl" name="ID_CUIITEMS">
+                                            <size>100,-1</size>
+                                            <style>wxSP_ARROW_KEYS|wxSP_WRAP</style>
+                                            <min>1</min>
+                                            <max>1000</max>
+                                            <value>23</value>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxStaticText" name="ID_TEXT">
+                                            <label>misc. options</label>
+                                        </object>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxCheckBox" name="ID_CUIDELAFTERPOST">
+                                            <label>delete item after posting</label>
+                                            <checked>1</checked>
+                                        </object>
+                                    </object>
+                                    <object class="spacer">
+                                        <flag>wxALIGN_CENTRE|wxALL</flag>
+                                        <border>5</border>
+                                            <size>20,20</size>
+                                    </object>
+                                    <object class="sizeritem">
+                                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+                                        <border>5</border>
+                                        <object class="wxCheckBox" name="ID_CUIAUTOPREVIEW">
+                                            <label>automatic preview</label>
+                                        </object>
+                                    </object>
+                                </object>
+                            </object>
+                        </object>
+                    </object>
+                </object>
                 <object class="notebookpage">
                     <label>Weblog/XML-RPC</label>
                     <object class="wxPanel" name="ConfigWeblogFunc">
@@ -504,69 +570,6 @@
                                                     <label>Autodetect</label>
                                                 </object>
                                             </object>
-                                        </object>
-                                    </object>
-                                </object>
-                            </object>
-                        </object>
-                    </object>
-                </object>
-                <object class="notebookpage">
-                    <label>User Interface</label>
-                    <object class="wxPanel" name="ConfigUiFunc">
-                        <object class="wxBoxSizer">
-                            <orient>wxVERTICAL</orient>
-                            <object class="sizeritem">
-                                <flag>wxALIGN_CENTRE|wxALL</flag>
-                                <border>5</border>
-                                <object class="wxFlexGridSizer">
-                                    <cols>2</cols>
-                                    <rows>0</rows>
-                                    <vgap>0</vgap>
-                                    <hgap>0</hgap>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                                        <border>5</border>
-                                        <object class="wxStaticText" name="ID_TEXT">
-                                            <label>items on newspage</label>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_CENTRE|wxALL</flag>
-                                        <border>5</border>
-                                        <object class="wxSpinCtrl" name="ID_CUIITEMS">
-                                            <size>100,-1</size>
-                                            <style>wxSP_ARROW_KEYS|wxSP_WRAP</style>
-                                            <min>1</min>
-                                            <max>1000</max>
-                                            <value>23</value>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                                        <border>5</border>
-                                        <object class="wxStaticText" name="ID_TEXT">
-                                            <label>misc. options</label>
-                                        </object>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                                        <border>5</border>
-                                        <object class="wxCheckBox" name="ID_CUIDELAFTERPOST">
-                                            <label>delete item after posting</label>
-                                            <checked>1</checked>
-                                        </object>
-                                    </object>
-                                    <object class="spacer">
-                                        <flag>wxALIGN_CENTRE|wxALL</flag>
-                                        <border>5</border>
-                                            <size>20,20</size>
-                                    </object>
-                                    <object class="sizeritem">
-                                        <flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-                                        <border>5</border>
-                                        <object class="wxCheckBox" name="ID_CUIAUTOPREVIEW">
-                                            <label>automatic preview</label>
                                         </object>
                                     </object>
                                 </object>

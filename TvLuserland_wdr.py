@@ -246,12 +246,12 @@ def ConfigFunc( parent, call_fit = true, set_sizer = true ):
     item1 = wxNotebookSizer( item2 )
 
     item3 = wxPanel( item2, -1 )
-    ConfigWeblogFunc( item3, false )
-    item2.AddPage( item3, "Weblog/XML-RPC" )
+    ConfigUiFunc( item3, false )
+    item2.AddPage( item3, "User Interface" )
 
     item4 = wxPanel( item2, -1 )
-    ConfigUiFunc( item4, false )
-    item2.AddPage( item4, "User Interface" )
+    ConfigWeblogFunc( item4, false )
+    item2.AddPage( item4, "Weblog/XML-RPC" )
 
     item5 = wxPanel( item2, -1 )
     ConfigNetworkFunc( item5, false )

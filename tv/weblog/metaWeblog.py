@@ -15,7 +15,7 @@ def getMaxPostId():
 def getCategories():
     return tv.config.getxmlrpcclient().metaWeblog.getCategories('', tv.config.get("weblog.user"), tv.config.get("weblog.password"))
 
-def newPost(post, publish = 1):
+def newPost(post, publish = 0):
     return tv.config.getxmlrpcclient().metaWeblog.newPost('home', tv.config.get("weblog.user"), tv.config.get("weblog.password"), post, publish) 
 
 def newDateForPost(postid, (year, month, day, hour, minute, seconds)):

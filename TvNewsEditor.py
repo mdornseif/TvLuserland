@@ -12,6 +12,7 @@ import tv.weblog.tools
 from asyncfunccall import *
 
 import urllib
+import mx.DateTime
 
 # category cache
 catnames = None
@@ -25,11 +26,12 @@ ID_QUIT = 100
 class EditPostDialog(wxDialog):
     def __init__(self, parent, id, title = None,
         pos = wxPyDefaultPosition, size = wxPyDefaultSize,
-        style = wxDEFAULT_DIALOG_STYLE, item = {}, killfunc = None ):
+        style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER, item = {}, killfunc = None ):
         global catnames
 
         self.item = item
         self.killfunc = killfunc
+        self.targetdate = None
         if title == None:
             title = "Posting: %s" % (item.get("title", ""))
 
@@ -40,18 +42,32 @@ class EditPostDialog(wxDialog):
         # preset content if wanted
         self.GetPosttitle().SetValue(item.get("title", "").strip())
         self.GetPostlink().SetValue(item.get("link", "").strip())
-        if "TVsourceurl" in item:
-            service = tv.aggregator.db.services.getservice(item["TVsourceurl"])
-            feedinfo = service["feedinfo"]
-            config = service["config"]
-            via = '[<a href="%s">%s</a>]' % (config.get("publiclink",
-                                                         item["TVsourceurl"]),
-                                             config.get("publicname", ""))
+
+
+        # XXX: configurable
+        if mx.DateTime.now() > item.get("TVdateobject", mx.DateTime.now())  + mx.DateTime.TimeDelta(4*24):
+            print "now:", mx.DateTime.now(), "delta:", mx.DateTime.TimeDelta(3)
+            print "object:", item.get("TVdateobject", mx.DateTime.now()), "added:", item.get("TVdateobject", mx.DateTime.now())  + mx.DateTime.TimeDelta(3)
+            self.GetDate().SetLabel(item.get("TVdateobject", mx.DateTime.now()).strftime("%e. %B %Y (%D)"))
+            self.targetdate = item.get("TVdateobject", mx.DateTime.now())
+        else:
+            self.GetDate().SetLabel("unchanged - %s" % item.get("TVdateobject", mx.DateTime.now()).strftime("%e. %B %Y (%D)"))
+
+        if "author" in item:
+            if "TVsourcename" in item:
+                via = "[%s via %s]" % (item["author"], item["TVsourcename"])
+            else:
+                via = "[%s]" % (item["author"])
+        elif "TVsourceurl" in item:
+            feedinfo, feedconfig = tv.aggregator.db.services.getserviceinfoandconfig(item["TVsourceurl"])
+            via = '[<a href="%s">%s</a>]' % (feedconfig.get("publiclink",
+                                                            item["TVsourceurl"]),
+                                             feedconfig.get("publicname", ""))
+            self.GetSource().SetLabel(feedconfig.get("publicname", ""))
         else:
             via = ""
         text = ("%s %s" % (item.get("description", "").strip(), via)).strip()
         self.GetPosttext().SetValue(text)
-
 
         # get categories if neened
         if catnames == None:
@@ -70,7 +86,7 @@ class EditPostDialog(wxDialog):
             dlg.Destroy()
 
         # add preview if possible
-        if "link" in item:
+        if item.get("link", "").startswith("http://"):
             startAsyncFunc(self, urllib.urlopen, (item["link"]))
             if tv.config.get('ui.autopreview'):
                 if wxPlatform == "__WXMSW__":
@@ -150,9 +166,30 @@ class EditPostDialog(wxDialog):
     # WDR: handler implementations for EditPost
 
     def OnSource(self, event):
-        pass
+        import TvService 
+        dialog = TvService.ServiceDialog(self.parent, self.item.get("TVsourceurl"))
+        dialog.Show()
 
     def OnChangedate(self, event):
+        import wxPython.lib.calendar
+        # year, month, day
+        if self.targetdate is not None:
+            dlg = wxPython.lib.calendar.CalenDlg(self,
+                                                 month=self.targetdate.month,
+                                                 day=self.targetdate.day,
+                                                 year=self.targetdate.year)
+        else:
+            dlg = wxPython.lib.calendar.CalenDlg(self)
+        dlg.Centre()
+        if dlg.ShowModal() == wxID_OK:
+            result = dlg.result
+            self.targetdate = mx.DateTime.DateTimeFrom(int(result[3]),
+                                                       int(dlg.calend.GetMonth()),
+                                                       int(result[1]))
+            self.GetDate().SetLabel(self.targetdate.strftime("%e. %B %Y (%D)"))
+        else:
+            print 'No Date Selected'
+                                                                                                             
         pass
 
     def OnBrowse(self, event):
@@ -204,7 +241,9 @@ class EditPostDialog(wxDialog):
         
     def OnPost(self, event):
         print "posting"
+        
         # XXX: fixme - Build a Posting from the Dialog Data
+        # fixme - show gauge
         info = self.GetPostingtext()
         info.SetLabel("Generating entry")
         info.GetContainingSizer().SetItemMinSize(info,
@@ -212,31 +251,50 @@ class EditPostDialog(wxDialog):
                                                  info.GetSize().GetHeight())
         info.GetContainingSizer().Layout()
 
-        self.item = {}
+        self.post = {}
         x = self.GetPosttext().GetValue()
         if x:
-            self.item['description'] = tv.weblog.tools.escape(x)
+            self.post['description'] = tv.weblog.tools.escape(x)
         x = self.GetPosttitle().GetValue()
         if x:
-            self.item['title'] = tv.weblog.tools.escape(x)
+            self.post['title'] = tv.weblog.tools.escape(x)
         x = self.GetPostlink().GetValue()
         if x:
-            self.item['link'] = x
-        self.item['categories'] = []
+            if x != self.item.get('link') and self.item.get('link') is not None:
+                source = self.item['link']
+            self.post['link'] = x
+        self.post['categories'] = []
         for x in self.categories:
             if x.GetValue():
-                self.item['categories'].append(x.GetLabel())
+                self.post['categories'].append(x.GetLabel())
         info.SetLabel("Sending to Weblog")
         print "Sending to Weblog"
-        tv.weblog.metaWeblog.newPost(self.item)            
-        print "posted"
-        info.SetLabel("Done")
+        try:
+            wxYield()
+            postid = tv.weblog.metaWeblog.newPost(self.post)            
+            wxYield()
+            print postid
+            print "posted"
+            if self.targetdate is not None:
+                info.SetLabel("setting date")
+                wxYield()
+                tv.weblog.metaWeblog.newDateForPost(postid, (self.targetdate.year,
+                                                             self.targetdate.month,
+                                                             self.targetdate.day,
+                                                             self.targetdate.hour,
+                                                             self.targetdate.minute,
+                                                             self.targetdate.second))
+                wxYield()
+                
+            # XXX: set source
+            info.SetLabel("Done")
 
-        self.Show(FALSE)
-        self.Destroy()
-
-        # delete posting
-        # XXX: Test if user want'S killing after posting.
-        if self.killfunc:
-            self.killfunc()
-        
+            self.Show(FALSE)
+            self.Destroy()
+            
+            # delete posting
+            # XXX: Test if user want'S killing after posting.
+            if self.killfunc:
+                self.killfunc()
+        except RuntimeError, msg: 
+            info.SetLabel("Error: %r" % msg)

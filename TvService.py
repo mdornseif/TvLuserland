@@ -1,6 +1,6 @@
 #!/bin/env python
 
-__rcsid__ = "$Id: TvService.py,v 1.4 2002/11/05 10:49:02 drt Exp $"
+__rcsid__ = "$Id: TvService.py,v 1.5 2002/12/23 18:58:58 drt Exp $"
 
 from pprint import pformat
 import time
@@ -19,24 +19,22 @@ class ServiceDialog(wxDialog):
         
         self.serviceurl = serviceurl
         ServiceDialogFunc( self, true )
-        service = tv.aggregator.db.services.getservice(serviceurl)
-        feedinfo = service["feedinfo"]
-        config = service["config"]
+        feedinfo, feedconfig = tv.aggregator.db.services.getserviceinfoandconfig(serviceurl)
         self.SetLabelAndResize(self.GetTitle(), feedinfo.get("title", "- unknown -"))
         self.GetLink().SetLabel(str(feedinfo.get("link", "- unknown -")))
-        self.GetPublicname().SetValue(config.get("publicname", feedinfo.get("title", "")))
-        self.GetPrivatename().SetValue(config.get("privatename", config.get("publicname", feedinfo.get("title", ""))))
-        self.GetPubliclink().SetValue(config.get("publiclink", feedinfo.get("link", "")))
-        howoften = config.get("fetchhowoften", 60)
+        self.GetPublicname().SetValue(feedconfig.get("publicname", feedinfo.get("title", "")))
+        self.GetPrivatename().SetValue(feedconfig.get("privatename", feedconfig.get("publicname", feedinfo.get("title", ""))))
+        self.GetPubliclink().SetValue(feedconfig.get("publiclink", feedinfo.get("link", "")))
+        howoften = feedconfig.get("fetchhowoften", 60)
         if howoften / 60  >= 1:
             howoften = "%dh" % int(howoften/60)
         else:
             howoften = "%dm" % howoften
         self.GetHowoften().SetStringSelection(howoften)
-        self.GetCheckforredirected().SetValue(config.get("checkforredirected", 0))
-        self.GetRemovemarkup().SetValue(config.get("removemarkup", 0))
-        self.GetExtractltd().SetValue(config.get("extractid", 0))
-        self.GetFixumlauts().SetValue(config.get("fixumlauts", 0))
+        self.GetCheckforredirected().SetValue(feedconfig.get("checkforredirected", 0))
+        self.GetRemovemarkup().SetValue(feedconfig.get("removemarkup", 0))
+        self.GetExtractltd().SetValue(feedconfig.get("extractid", 0))
+        self.GetFixumlauts().SetValue(feedconfig.get("fixumlauts", 0))
         
         
         self.UpdateFeedinfo()
@@ -145,33 +143,31 @@ class ServiceDialog(wxDialog):
         event.Skip(true)
 
     def OnOk(self, event):
-        service = tv.aggregator.db.services.getservice(self.serviceurl)
-        feedinfo = service["feedinfo"]
-        config = service["config"]
-        config["publicname"] = self.GetPublicname().GetValue().strip()
-        config["privatename"] = self.GetPrivatename().GetValue().strip()
-        config["publiclink"] = self.GetPubliclink().GetValue().strip()
-        if config["publiclink"] == "":
-            config["publiclink"] = service.get("link", "")
-        if config["publicname"] == "" and config["privatename"] != "":
-            config["publicname"] = config["privatename"]
-        if config["privatename"] == "" and config["publicname"] != "":
-            config["privatename"] = config["publicname"]
+        feedinfo, feedconfig = tv.aggregator.db.services.getserviceinfoandconfig(self.serviceurl)
+        feedconfig["publicname"] = self.GetPublicname().GetValue().strip()
+        feedconfig["privatename"] = self.GetPrivatename().GetValue().strip()
+        feedconfig["publiclink"] = self.GetPubliclink().GetValue().strip()
+        if feedconfig["publiclink"] == "":
+            feedconfig["publiclink"] = service.get("link", "")
+        if feedconfig["publicname"] == "" and feedconfig["privatename"] != "":
+            feedconfig["publicname"] = feedconfig["privatename"]
+        if feedconfig["privatename"] == "" and feedconfig["publicname"] != "":
+            feedconfig["privatename"] = feedconfig["publicname"]
         howoften = self.GetHowoften().GetStringSelection()
         if howoften.endswith('m'):
-            config["fetchhowoften"] = int(howoften[:-1])
+            feedconfig["fetchhowoften"] = int(howoften[:-1])
         elif howoften.endswith('h'):
-            config["fetchhowoften"] = int(howoften[:-1]) * 60
+            feedconfig["fetchhowoften"] = int(howoften[:-1]) * 60
         else:
           print "unknown choice"
-        config["checkforredirected"] = self.GetCheckforredirected().GetValue()
-        config["removemarkup"] = self.GetRemovemarkup().GetValue()
-        config["extractid"] = self.GetExtractltd().GetValue()
-        config["fixumlauts"] = self.GetFixumlauts().GetValue()
+        feedconfig["checkforredirected"] = self.GetCheckforredirected().GetValue()
+        feedconfig["removemarkup"] = self.GetRemovemarkup().GetValue()
+        feedconfig["extractid"] = self.GetExtractltd().GetValue()
+        feedconfig["fixumlauts"] = self.GetFixumlauts().GetValue()
 
-        tv.aggregator.db.services.saveconfig(self.serviceurl, config)
+        tv.aggregator.db.services.savefeedconfig(self.serviceurl, feedconfig)
 
-        print howoften, config["publiclink"], config["publicname"], config["privatename"]
+        print howoften, feedconfig["publiclink"], feedconfig["publicname"], feedconfig["privatename"]
         self.Show(FALSE)
         self.Destroy()
 
