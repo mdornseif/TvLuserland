@@ -1,8 +1,8 @@
 Metadata-Version: 1.0
 Name: medusa
-Version: 0.5.2
+Version: 0.5.3
 Summary: A framework for implementing asynchronous servers.
-Home-page: http://www.amk.ca/python/code/medusa.html
+Home-page: http://oedipus.sourceforge.net/medusa/
 Author: A.M. Kuchling
 Author-email: akuchlin@mems-exchange.org
 License: UNKNOWN

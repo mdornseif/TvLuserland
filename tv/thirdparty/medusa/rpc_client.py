@@ -225,7 +225,6 @@ def fastrpc_connect (address = ('localhost', 8748)):
 # ===========================================================================
 
 import asynchat
-import fifo
 
 class async_fastrpc_client (asynchat.async_chat):
 
@@ -243,7 +242,7 @@ class async_fastrpc_client (asynchat.async_chat):
 
         self.create_socket (family, socket.SOCK_STREAM)
         self.address = address
-        self.request_fifo = fifo.fifo()
+        self.request_fifo = []
         self.buffer = []
         self.pstate = self.STATE_LENGTH
         self.set_terminator (8)
@@ -264,7 +263,7 @@ class async_fastrpc_client (asynchat.async_chat):
     def flush_pending_requests (self, why):
         f = self.request_fifo
         while len(f):
-            callback = f.pop()
+            callback = f.pop(0)
             callback (why, None)
 
     def collect_incoming_data (self, data):
@@ -282,7 +281,7 @@ class async_fastrpc_client (asynchat.async_chat):
             #self.set_terminator (8)
             #self.pstate = self.STATE_LENGTH
             error, result = marshal.loads (data)
-            callback = self.request_fifo.pop()
+            callback = self.request_fifo.pop(0)
             callback (error, result)
             self.close()    # for chat server
 
@@ -296,7 +295,7 @@ class async_fastrpc_client (asynchat.async_chat):
         path = string.split (method, '.')
         packet = marshal.dumps ((path, args))
         self.push ('%08x%s' % (len(packet), packet))
-        self.request_fifo.push (callback)
+        self.request_fifo.append(callback)
 
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@
 #                                                All Rights Reserved.
 #
 
-RCS_ID =  '$Id: unix_user_handler.py,v 1.1 2002/11/09 08:05:48 drt Exp $'
+RCS_ID =  '$Id: unix_user_handler.py,v 1.2 2002/12/29 20:00:05 drt Exp $'
 
 # support for `~user/public_html'.
 
@@ -35,15 +35,13 @@ class unix_user_handler (default_handler.default_handler):
 
     def handle_request (self, request):
         # get the user name
-        user = user_dir.group(1)
-        rest = user_dir.group(2)
+        m = user_dir.match (request.uri)
+        user = m.group(1)
+        rest = m.group(2)
 
         # special hack to catch those lazy URL typers
         if not rest:
-            request['Location'] = 'http://%s/~%s/' % (
-                    request.channel.server.server_name,
-                    user
-                    )
+            request['Location'] = '/~%s/' % user
             request.error (301)
             return
 

@@ -5,7 +5,7 @@
 #                                                All Rights Reserved.
 #
 
-RCS_ID =  '$Id: auth_handler.py,v 1.1 2002/11/09 08:05:47 drt Exp $'
+RCS_ID =  '$Id: auth_handler.py,v 1.2 2002/12/29 20:00:05 drt Exp $'
 
 # support for 'basic' authenticaion.
 
@@ -20,7 +20,6 @@ import default_handler
 
 get_header = default_handler.get_header
 
-import http_server
 import producers
 
 # This is a 'handler' that wraps an authorization method
@@ -48,7 +47,7 @@ class auth_handler:
         if scheme:
             scheme = string.lower (scheme)
             if scheme == 'basic':
-                cookie = AUTHORIZATION.group(2)
+                cookie = get_header (AUTHORIZATION, request.header, 2)
                 try:
                     decoded = base64.decodestring (cookie)
                 except:
@@ -117,9 +116,7 @@ class auth_handler:
         r.append (
                 producers.simple_producer ('</ul>')
                 )
-        return producers.composite_producer (
-                http_server.fifo (r)
-                )
+        return producers.composite_producer(r)
 
 class dictionary_authorizer:
     def __init__ (self, dict):

@@ -1,4 +1,16 @@
 
+Version 0.5.3:
+
+* Delete the broken and rather boring dual_server and simple_httpd
+  demo scripts.  start_medusa.py should be sufficient as an example.
+* Fix indentation bug in demo/script_server.py noted by Richard Philips
+* Fix bug in producers.composite_producer, spotted and fixed by Daniel Krech
+* Added test suite for producers.py
+* Fix timestamps in http_server logs
+* Fix unix_user_handler bug, spotted and fixed by Sergio Fernández.
+* Fix auth_handler bug, spotted and fixed by Sergio Fernández.
+* Delete unused http_server.fifo class and fifo.py module.
+
 Version 0.5.2:
 
 * Fix syntax error and missing import in default_handler.py

@@ -3,11 +3,9 @@ CHANGES.txt
 chat_server.py
 counter.py
 default_handler.py
-demo/dual_server.py
 demo/publish.py
 demo/script_server.py
 demo/simple_anon_ftpd.py
-demo/simple_httpd.py
 demo/start_medusa.py
 docs/async_blurbs.txt
 docs/composing_producers.gif
@@ -20,7 +18,6 @@ docs/README.html
 docs/threads.txt
 docs/tkinter.txt
 event_loop.py
-fifo.py
 filesys.py
 ftp_server.py
 http_date.py

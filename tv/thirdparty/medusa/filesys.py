@@ -1,5 +1,5 @@
 # -*- Mode: Python -*-
-#       $Id: filesys.py,v 1.1 2002/11/09 08:05:47 drt Exp $
+#       $Id: filesys.py,v 1.2 2002/12/29 20:00:05 drt Exp $
 #       Author: Sam Rushing <rushing@nightmare.com>
 #
 # Generic filesystem interface.

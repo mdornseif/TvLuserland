@@ -1,6 +1,6 @@
 # -*- Mode: Python -*-
 
-VERSION_STRING = "$Id: thread_channel.py,v 1.1 2002/11/09 08:19:47 drt Exp $"
+VERSION_STRING = "$Id: thread_channel.py,v 1.2 2002/12/29 20:00:06 drt Exp $"
 
 # This will probably only work on Unix.
 

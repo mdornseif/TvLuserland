@@ -6,7 +6,7 @@
 #                                                All Rights Reserved.
 #
 
-RCS_ID =  '$Id: http_server.py,v 1.1 2002/11/09 08:05:47 drt Exp $'
+RCS_ID =  '$Id: http_server.py,v 1.2 2002/12/29 20:00:05 drt Exp $'
 
 # python modules
 import os
@@ -113,7 +113,7 @@ class http_request:
         for line in self.header:
             m = head_reg.match (line)
             if m.end() == len(line):
-                return head_reg.group (group)
+                return m.group (group)
         return ''
 
     def get_header (self, header):
@@ -258,10 +258,24 @@ class http_request:
             self.channel.close_when_done()
 
     def log_date_string (self, when):
-        return time.strftime (
-                '%d/%b/%Y:%H:%M:%S ',
-                time.gmtime(when)
-                ) + tz_for_log
+        gmt = time.gmtime(when)
+        if time.daylight and gmt[8]:
+            tz = time.altzone
+        else:
+            tz = time.timezone
+        if tz > 0:
+            neg = 1
+        else:
+            neg = 0
+            tz = -tz
+        h, rem = divmod (tz, 3600)
+        m, rem = divmod (rem, 60)
+        if neg:
+            offset = '-%02d%02d' % (h, m)
+        else:
+            offset = '+%02d%02d' % (h, m)
+
+        return time.strftime ( '%d/%b/%Y:%H:%M:%S ', gmt) + offset
 
     def log (self, bytes):
         self.channel.server.logger.log (
@@ -688,56 +702,9 @@ def crack_request (r):
             version = m.group(5)
         else:
             version = None
-        return string.lower (m.group(1)), m.group(2), version
+        return m.group(1), m.group(2), version
     else:
         return None, None, None
-
-class fifo:
-    def __init__ (self, list=None):
-        if not list:
-            self.list = []
-        else:
-            self.list = list
-
-    def __len__ (self):
-        return len(self.list)
-
-    def first (self):
-        return self.list[0]
-
-    def push_front (self, object):
-        self.list.insert (0, object)
-
-    def push (self, data):
-        self.list.append (data)
-
-    def pop (self):
-        if self.list:
-            result = self.list[0]
-            del self.list[0]
-            return (1, result)
-        else:
-            return (0, None)
-
-def compute_timezone_for_log ():
-    if time.daylight:
-        tz = time.altzone
-    else:
-        tz = time.timezone
-    if tz > 0:
-        neg = 1
-    else:
-        neg = 0
-        tz = -tz
-    h, rem = divmod (tz, 3600)
-    m, rem = divmod (rem, 60)
-    if neg:
-        return '-%02d%02d' % (h, m)
-    else:
-        return '+%02d%02d' % (h, m)
-
-# if you run this program over a TZ change boundary, this will be invalid.
-tz_for_log = compute_timezone_for_log()
 
 if __name__ == '__main__':
     import sys

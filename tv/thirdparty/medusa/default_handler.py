@@ -5,7 +5,7 @@
 #                                                All Rights Reserved.
 #
 
-RCS_ID = '$Id: default_handler.py,v 1.1 2002/11/09 08:05:47 drt Exp $'
+RCS_ID = '$Id: default_handler.py,v 1.2 2002/12/29 20:00:05 drt Exp $'
 
 # standard python modules
 import mimetypes
@@ -38,7 +38,7 @@ from counter import counter
 
 class default_handler:
 
-    valid_commands = ['get', 'head']
+    valid_commands = ['GET', 'HEAD']
 
     IDENT = 'Default HTTP Request Handler'
 
@@ -162,7 +162,7 @@ class default_handler:
         request['Content-Length'] = file_length
         self.set_content_type (path, request)
 
-        if request.command == 'get':
+        if request.command == 'GET':
             request.push (self.default_file_producer (file))
 
         self.file_counter.increment()
@@ -189,7 +189,7 @@ class default_handler:
                 )
 
 # HTTP/1.0 doesn't say anything about the "; length=nnnn" addition
-# to this header.  I suppose it's purpose is to avoid the overhead
+# to this header.  I suppose its purpose is to avoid the overhead
 # of parsing dates...
 IF_MODIFIED_SINCE = re.compile (
         'If-Modified-Since: ([^;]+)((; length=([0-9]+)$)|$)',

@@ -5,10 +5,11 @@
 
 # Based on "xmlrpcserver.py" by Fredrik Lundh (fredrik@pythonware.com)
 
-VERSION = "$Id: xmlrpc_handler.py,v 1.2 2002/12/28 23:56:38 drt Exp $"
+VERSION = "$Id: xmlrpc_handler.py,v 1.3 2002/12/29 20:00:05 drt Exp $"
 
-import http_server
 import xmlrpclib
+import sys, traceback
+
 
 import string
 import sys
@@ -30,7 +31,7 @@ class xmlrpc_handler:
         else:
             request.error (400)
 
-    def continue_request (self, data, request):
+    def continue_request (self, data, request):            
         params, method = xmlrpclib.loads (data)
         try:
             # generate response
@@ -40,6 +41,11 @@ class xmlrpc_handler:
                     response = (response,)
             except:
                 # report exception back to server
+                print "Exception in user code:"
+                print '-' * 60
+                traceback.print_exc(file=sys.stdout)
+                print '-' * 60
+                                        
                 response = xmlrpclib.dumps (
                         xmlrpclib.Fault (1, "%s:%s" % (sys.exc_type, sys.exc_value))
                         )
@@ -47,6 +53,10 @@ class xmlrpc_handler:
                 response = xmlrpclib.dumps (response, methodresponse=1)
         except:
             # internal error, report as HTTP server error
+            print "Exception in user code:"
+            print '-' * 60
+            traceback.print_exc(file=sys.stdout)
+            print '-' * 60
             request.error (500)
         else:
             # got a valid XML RPC response
@@ -97,6 +107,7 @@ class collector:
 
 if __name__ == '__main__':
 
+    import http_server
     import asyncore
 
     hs = http_server.http_server ('', 8000)

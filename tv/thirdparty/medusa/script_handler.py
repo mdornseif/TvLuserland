@@ -72,7 +72,7 @@ class script_handler:
 
             request.script_filename = self.filesystem.translate (path)
 
-            if request.command in ('put', 'post'):
+            if request.command in ('PUT', 'POST'):
                 # look for a Content-Length header.
                 cl = request.get_header ('content-length')
                 length = int(cl)
@@ -154,7 +154,7 @@ class persistent_script_handler:
             return 0
 
     def handle_request (self, request):
-        if request.command in ('put', 'post'):
+        if request.command in ('PUT', 'POST'):
             # look for a Content-Length header.
             cl = request.get_header ('content-length')
             length = int(cl)

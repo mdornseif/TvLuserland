@@ -1,8 +1,6 @@
 # -*- Mode: Python -*-
 
-RCS_ID = '$Id: producers.py,v 1.1 2002/11/09 08:05:47 drt Exp $'
-
-import string
+RCS_ID = '$Id: producers.py,v 1.2 2002/12/29 20:00:05 drt Exp $'
 
 """
 A collection of producers.
@@ -12,6 +10,9 @@ in various ways to get interesting and useful behaviors.
 For example, you can feed dynamically-produced output into the compressing
 producer, then wrap this with the 'chunked' transfer-encoding producer.
 """
+
+import string
+from asynchat import find_prefix_at_end
 
 class simple_producer:
     "producer for a string"
@@ -64,7 +65,7 @@ class lines_producer:
             return ''
 
 class buffer_list_producer:
-    "producer for a list of buffers"
+    "producer for a list of strings"
 
     # i.e., data == string.join (buffers, '')
 
@@ -151,12 +152,12 @@ class composite_producer:
 
     def more (self):
         while len(self.producers):
-            p = self.producers.pop(0)
+            p = self.producers[0] 
             d = p.more()
             if d:
                 return d
             else:
-                self.producers.pop()
+                self.producers.pop(0) 
         else:
             return ''
 
@@ -301,7 +302,6 @@ class escaping_producer:
         self.esc_from = esc_from
         self.esc_to = esc_to
         self.buffer = ''
-        from asynchat import find_prefix_at_end
         self.find_prefix_at_end = find_prefix_at_end
 
     def more (self):

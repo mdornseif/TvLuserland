@@ -1,13 +1,12 @@
 Medusa is a 'server platform' -- it provides a framework for
 implementing asynchronous socket-based servers (TCP/IP and on Unix,
-Unix domain sockets).
+Unix domain, sockets).
 
-An asynchronous socket server is a server that can communicate with
-many other socket clients and servers simultaneously, by multiplexing
-I/O within a single process/thread.  In the context of an HTTP server,
-this means a single process can serve hundreds or even thousands of
-clients, depending only on the operating system's configuration and
-limitations.
+An asynchronous socket server is a server that can communicate with many
+other clients simultaneously by multiplexing I/O within a single
+process/thread.  In the context of an HTTP server, this means a single
+process can serve hundreds or even thousands of clients, depending only on
+the operating system's configuration and limitations.
 
 There are several advantages to this approach:
      

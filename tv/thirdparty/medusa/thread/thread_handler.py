@@ -15,8 +15,6 @@ from medusa import producers
 
 from medusa.default_handler import unquote, get_header
 
-from medusa import fifo
-
 import threading
 
 class request_queue:
@@ -24,11 +22,11 @@ class request_queue:
     def __init__ (self):
         self.mon = threading.RLock()
         self.cv = threading.Condition (self.mon)
-        self.queue = fifo.fifo()
+        self.queue = []
 
     def put (self, item):
         self.cv.acquire()
-        self.queue.push (item)
+        self.queue.append(item)
         self.cv.notify()
         self.cv.release()
 
@@ -36,7 +34,7 @@ class request_queue:
         self.cv.acquire()
         while not self.queue:
             self.cv.wait()
-        result = self.queue.pop()
+        result = self.queue.pop(0)
         self.cv.release()
         return result
 

@@ -1,6 +1,6 @@
 # -*- Mode: Python -*-
 
-VERSION_STRING = "$Id: select_trigger.py,v 1.1 2002/11/09 08:19:47 drt Exp $"
+VERSION_STRING = "$Id: select_trigger.py,v 1.2 2002/12/29 20:00:05 drt Exp $"
 
 import asyncore
 import asynchat
