@@ -1,10 +1,12 @@
 #!/usr/local/bin/python
 
-__rcsid__ = "$Id: rssfetch.py,v 1.4 2002/11/04 22:41:36 drt Exp $"
+__rcsid__ = "$Id: rssfetch.py,v 1.5 2002/11/05 16:54:00 drt Exp $"
 
 import rssparser
 import random
 import md5
+import re
+import htmlentitydefs
 import mx.DateTime, mx.DateTime.Parser
 import tv.aggregator.db.items
 import tv.aggregator.db.services
@@ -308,7 +310,26 @@ URLS = [
 # "http://www.syndic8.com/genfeed.php?Format=rss",
     ]
 
-random.shuffle(URLS)
+
+# inspired by the effbot
+charref_re = re.compile('&#([0-9]+[^0-9]);')
+charrefhex_re = re.compile('&#x([0-9a-fA-F]+[^0-9]);')
+entity_re = re.compile("&(\w+?);")
+
+def descape_entity(m, defs=htmlentitydefs.entitydefs):
+    # callback: translate one entity to its ISO Latin value
+    try:
+        return defs[m.group(1)]
+    except KeyError:
+        return m.group(0) # use as is
+
+def descape_charref(m):
+    return chr(int(m.group(1)))
+    
+def descape(string):
+    string = entity_re.sub(descape_entity, string)
+    return charref_re.sub(descape_charref, string)
+                            
 
 def fixItem(item, sourceurl, channel = {}):
     # add guid if needed
@@ -319,6 +340,11 @@ def fixItem(item, sourceurl, channel = {}):
     else:
         item["TVdateobject"] = mx.DateTime.now()
     item["TVsourceurl"] = sourceurl
+    if "title" in item:
+        item["title"] = descape(item["title"])
+    if "description" in item:
+        item["description"] = descape(item["description"])
+        
 
 def fixService(service = {}, etag = None, modified = None):
     service["TVetag"] = etag

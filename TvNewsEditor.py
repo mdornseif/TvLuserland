@@ -7,6 +7,7 @@ from TvLuserland_wdr import *
 
 import tv.weblog.metaWeblog
 import tv.aggregator.db.services
+import tv.weblog.tools
 
 from asyncfunccall import *
 
@@ -175,20 +176,21 @@ class EditPostDialog(wxDialog):
         
     def OnPost(self, event):
         print "posting"
-        # Build a Posting from the Dialog Data
+        # XXX: fixme - Build a Posting from the Dialog Data
         info = self.GetPostingtext()
         info.SetLabel("Generating entry")
         info.GetContainingSizer().SetItemMinSize(info,
-                                                 info.GetSize().GetWidth(), info.GetSize().GetHeight())
+                                                 info.GetSize().GetWidth(),
+                                                 info.GetSize().GetHeight())
         info.GetContainingSizer().Layout()
 
         self.item = {}
         x = self.GetPosttext().GetValue()
         if x:
-            self.item['description'] = x
+            self.item['description'] = tv.weblog.tools.escape(x)
         x = self.GetPosttitle().GetValue()
         if x:
-            self.item['title'] = x
+            self.item['title'] = tv.weblog.tools.escape(x)
         x = self.GetPostlink().GetValue()
         if x:
             self.item['link'] = x
