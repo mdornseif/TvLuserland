@@ -1,6 +1,6 @@
 # Try using cPickle and cStringIO if available.
 
-__rcsid__ = "$Id: __init__.py,v 1.4 2002/11/04 22:43:00 drt Exp $"
+__rcsid__ = "$Id: __init__.py,v 1.5 2002/11/14 13:33:03 drt Exp $"
 
 try:
     from cPickle import load, dump, loads, dumps
@@ -12,25 +12,51 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-import mx.DateTime, mx.DateTime.Parser
+import mx.DateTime
                                 
-import os.path, atexit
+import os.path
+import atexit
 import time
+import md5
 from bsddb3 import db
+
 import tv.config
 from tv.aggregator.db import _dbenv
 
 # try loading dupdeb
 def init():
-    global _dupedb, _itemdb, _itembysourcedb, _itembydatedb, _sourcedb
+    global _dupedb, _dupetitledb, _dupelinkdb, _dupedescriptiondb, _itemdb, _itembysourcedb, _itembydatedb, _sourcedb, _deletedb
 
     # init dupedb
-    try:
-        fp = open(os.path.join(tv.config.get("fs.dbdir"), "items.dupedb.pickle"), 'r')
-        _dupedb = load(fp)
-        fp.close()
-    except:
-        _dupedb = {} 
+    #try:
+    #    fp = open(os.path.join(tv.config.get("fs.dbdir"), "items.dupedb.pickle"), 'r')
+    #    _dupedb = load(fp)
+    #    fp.close()
+    #except:
+    #    _dupedb = {} 
+    _dupedb = db.DB(_dbenv)
+    _dupedb.open("dupes",   
+                 dbtype = db.DB_BTREE,
+                 flags = db.DB_CREATE|db.DB_THREAD,
+                 mode = 0644)
+    _dupetitledb = db.DB(_dbenv)
+    _dupetitledb.set_flags(db.DB_DUP)
+    _dupetitledb.open("dupes-title",   
+                      dbtype = db.DB_BTREE,
+                      flags = db.DB_CREATE|db.DB_THREAD,
+                      mode = 0644)
+    _dupelinkdb = db.DB(_dbenv)
+    _dupelinkdb.set_flags(db.DB_DUP)
+    _dupelinkdb.open("dupes-link",   
+                     dbtype = db.DB_BTREE,
+                     flags = db.DB_CREATE|db.DB_THREAD,
+                     mode = 0644)
+    _dupedescriptiondb = db.DB(_dbenv)
+    _dupedescriptiondb.set_flags(db.DB_DUP)
+    _dupedescriptiondb.open("dupes-description",   
+                 dbtype = db.DB_BTREE,
+                 flags = db.DB_CREATE|db.DB_THREAD,
+                 mode = 0644)
 
     # init db
     # create and open the DB
@@ -51,14 +77,37 @@ def init():
     _itembysourcedb.set_flags(db.DB_DUP)
     _itembysourcedb.open("items-bysource",   
                 dbtype = db.DB_BTREE,
-                flags = db.DB_CREATE|db.DB_DIRTY_READ|db.DB_THREAD,
+                flags = db.DB_CREATE|db.DB_THREAD,
                 mode = 0644)
+
+    _deletedb = db.DB(_dbenv)
+    _deletedb.open("deletedb",   
+                   dbtype = db.DB_RECNO,
+                   flags = db.DB_CREATE|db.DB_THREAD,
+                   mode = 0644)
+
     atexit.register(close)
+
+def close():
+    _itemdb.close()
+    _itembysourcedb.close()
+    _itembydatedb.close()
+    _deletedb.close()
+    _dupetitledb.close()
+    _dupelinkdb.close()
+    _dupedescriptiondb.close()
+    #_dbenv.close()
 
 
 def getitem(guid):
     d = _itemdb.get(guid)
-    return loads(d)
+    if d == None:
+        print "error reading item %r" % guid
+        deleteitemfromdate_iterating(guid)
+        deleteitemfromsource_iterating(guid)
+        return {}
+    else:
+        return loads(d)
 
 def getitemsBySource(sourceurl, maxitems = 0xffffffffffL):
     ret = []
@@ -108,6 +157,8 @@ def deleteitem(guid, date = None, sourceurl = None):
         date = item["TVdateobject"]
         sourceurl = item["TVsourceurl"]
 
+    _deletedb.append(guid)
+
     try:
         cur = _itembydatedb.cursor()
         rec = cur.set_both(str(date), guid)
@@ -116,15 +167,7 @@ def deleteitem(guid, date = None, sourceurl = None):
     except db.DBNotFoundError, msg:
         cur.close()
         print msg
-        # something strange happened, we couldn't find this posting. We do
-        # a full DB scan to find it's guid and remove it. ugly but effective.
-        cur = _itembydatedb.cursor()
-        for k, v in _itembydatedb.items():
-            if v == guid:
-                print "removing", k, guid
-                rec = cur.set_both(k, guid)
-                cur.delete() 
-        cur.close()
+        deleteitemfromdate_iterating(guid)
 
     try:
         cur = _itembysourcedb.cursor()
@@ -134,16 +177,32 @@ def deleteitem(guid, date = None, sourceurl = None):
     except db.DBNotFoundError, msg:
         cur.close()
         print msg
-        # something strange happened, we couldn't find this posting. We do
-        # a full DB scan to find it's guid and remove it. ugly but effective.
-        cur = _itembydatedb.cursor()
-        for k, v in _itembysourcedb.items():
-            if v == guid:
-                print "removing", k, guid
-                rec = cur.set_both(k, guid)
+        deleteitemfromsource_iterating(guid)
+
+def deleteitemfromdate_iterating(guid):
+    # something strange happened, we couldn't find this posting. We do
+    # a full DB scan to find it's guid and remove it. ugly but effective.
+    cur = _itembydatedb.cursor()
+    for k, v in _itembydatedb.items():
+        if v == guid:
+            rec = cur.set_both(k, guid)
+            print "removing", k, guid, rec
+            if rec:
                 cur.delete() 
-        cur.close()
-            
+    cur.close()
+
+def deleteitemfromsource_iterating(guid):
+    # something strange happened, we couldn't find this posting. We do
+    # a full DB scan to find it's guid and remove it. ugly but effective.
+    cur = _itembydatedb.cursor()
+    for k, v in _itembysourcedb.items():
+        if v == guid:
+            rec = cur.set_both(k, guid)
+            print "removing", k, guid, rec
+            if rec:
+                cur.delete() 
+    cur.close()
+
 
 def deleteallitemsfromsource(sourceurl):
     # get guids of all items and remove them from itembysourcedb
@@ -151,6 +210,7 @@ def deleteallitemsfromsource(sourceurl):
     cur = _itembysourcedb.cursor()
     rec = cur.set(sourceurl)
     while rec:
+        _deletedb.append(rec[1])
         guidlist[rec[1]] = 1
         cur.delete()
         rec = cur.next_dup()
@@ -167,7 +227,8 @@ def deleteallitemsfromsource(sourceurl):
     cur.close()
     
 def getnrofunreaditems():
-    return len(_itembydatedb.keys())
+    # DB_FAST_STAT ???
+    return _itembydatedb.stat()["ndata"]
 
 def getnrofunreaditemsforsource(sourceurl):
     ret = 0
@@ -182,26 +243,18 @@ def getnrofunreaditemsforsource(sourceurl):
     cur.close()
     return ret
 
-def save():
-    fp = open(os.path.join(tv.config.get("fs.dbdir"), "items.dupedb.pickle"), 'w')
-    dump(_dupedb, fp, 1)
-    fp.flush()
-    fp.close()
-
-def close():
-    save()
-    _itemdb.close()
-    _itembysourcedb.close()
-    _itembydatedb.close()
-    #_dbenv.close()
-
 def checkdupe(item):
-    if item["guid"] in _dupedb:
+    if _dupedb.has_key(item["guid"]):
         ret = 1
     else:
         ret = None
-    _dupedb[item["guid"]] = time.time()
+        _dupedb.put(key=item["guid"], data=str(mx.DateTime.now()))
+        if "title" in item:
+            _dupetitledb.put(key=str(item["title"]), data=item["guid"])
+        if "link" in item:
+            _dupelinkdb.put(key=str(item["link"]), data=item["guid"])
+        if "description" in item:
+            _dupedescriptiondb.put(key=md5.new(item["description"]).digest(), data=item["guid"])
     return ret
-
 
 init()
