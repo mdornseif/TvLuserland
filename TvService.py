@@ -1,6 +1,6 @@
 #!/bin/env python
 
-__rcsid__ = "$Id: TvService.py,v 1.3 2002/11/04 22:46:51 drt Exp $"
+__rcsid__ = "$Id: TvService.py,v 1.4 2002/11/05 10:49:02 drt Exp $"
 
 from pprint import pformat
 import time
@@ -34,13 +34,15 @@ class ServiceDialog(wxDialog):
             howoften = "%dm" % howoften
         self.GetHowoften().SetStringSelection(howoften)
         self.GetCheckforredirected().SetValue(config.get("checkforredirected", 0))
+        self.GetRemovemarkup().SetValue(config.get("removemarkup", 0))
+        self.GetExtractltd().SetValue(config.get("extractid", 0))
+        self.GetFixumlauts().SetValue(config.get("fixumlauts", 0))
+        
         
         self.UpdateFeedinfo()
         
         # WDR: handler declarations for ServiceDialog
-        #EVT_LEFT_UP(self, self.OnLink)
         EVT_BUTTON(self, ID_KILLITEMS, self.OnKillitems)
-        EVT_BUTTON(self, ID_REFRESH, self.OnDorefresh)
         EVT_BUTTON(self, ID_REMOVESERVICE, self.OnRemove)
         EVT_BUTTON(self, wxID_OK, self.OnOk)
         EVT_IDLE(self, self.OnIdle)
@@ -102,12 +104,9 @@ class ServiceDialog(wxDialog):
     def GetLastrequest(self):
         return wxPyTypeCast( self.FindWindowById(ID_LASTREQUEST), "wxStaticText" )
 
-    def Validate(self, win):
-        return true
-
     def SetLabelAndResize(self, control, label):
         control.SetLabel(str(label))
-        control.SetSize(self.GetLastnewitem().GetBestSize())
+        control.SetSize(control.GetBestSize())
         control.GetContainingSizer().SetItemMinSize(control,
                                                  control.GetSize().GetWidth(),
                                                  control.GetSize().GetHeight())
@@ -131,18 +130,10 @@ class ServiceDialog(wxDialog):
 
     # WDR: handler implementations for ServiceDialog
 
-    def OnLink(self, event):
-        print "link klicked"
-        pass
-
     def OnKillitems(self, event):
         tv.aggregator.db.items.deleteallitemsfromsource(self.serviceurl)
         self.UpdateFeedinfo()
         # XXX: inform newspane
-
-    def OnDorefresh(self, event):
-        print "refresh klicked"
-        pass
 
     def OnRemove(self, event):
         tv.aggregator.db.services.unsubscribe(self.serviceurl)
@@ -174,6 +165,9 @@ class ServiceDialog(wxDialog):
         else:
           print "unknown choice"
         config["checkforredirected"] = self.GetCheckforredirected().GetValue()
+        config["removemarkup"] = self.GetRemovemarkup().GetValue()
+        config["extractid"] = self.GetExtractltd().GetValue()
+        config["fixumlauts"] = self.GetFixumlauts().GetValue()
 
         tv.aggregator.db.services.saveconfig(self.serviceurl, config)
 

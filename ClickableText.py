@@ -1,5 +1,5 @@
 
-__rcsid__ = "$Id: ClickableText.py,v 1.2 2002/11/04 22:37:59 drt Exp $"
+__rcsid__ = "$Id: ClickableText.py,v 1.3 2002/11/05 10:49:02 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.lib.buttons import  wxGenButtonEvent
@@ -107,7 +107,7 @@ class wxClickableText(wxPyControl):
 
     def Notify(self):
         evt = wxGenButtonEvent(wxEVT_COMMAND_BUTTON_CLICKED, self.GetId())
-        evt.SetIsDown(not self.up)
+        evt.SetIsDown(true)
         evt.SetButtonObj(self)
         evt.SetEventObject(self)
         self.GetEventHandler().ProcessEvent(evt)
@@ -157,10 +157,9 @@ class wxClickableText(wxPyControl):
         if not self.IsEnabled():
             return
         #self.ReleaseMouse()
-        if not self.up:    # if the button was down when the mouse was released...
-            self.Notify()
         self.up = true
         self.Refresh()
+        self.Notify()
         event.Skip()
 
 

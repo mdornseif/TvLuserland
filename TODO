@@ -1,42 +1,45 @@
+* deleted item DB
+* postings per service merken
+* Hand Icon when over a wxLinkText
 * Newsreader View
-* Preview ohne Posting
 * Resizing
 * Bei Newfeeds die Möglichkeit geben mehrere feeds gleichzeitig zu subscriben
 * Umlaute maskieren
 * Asyncrones Posten
 * bsddb recovery
-* postings per service merken
 * Beim Posten verschieben sich die Buttons
-* deleted item DB
 * Show nr of unread items in toolbar
 * Asyncrones Caregory reading
 * neue items zum pane hinzufügen
 * items später rendern
-* "Open in Browser" in Pane
-* Feeds hinzufühen
 * Cut-und-Paste aus preview
 * Urls in Statusbar
-* "Open in Browser"
 * RSS aus der GUI holen
-* Anzahl der ungelesenen Items anzeigen
 * PyCrust
 * Dupprobleme / BSDDUPDEB
 * undelete
-* Vom NEwspane aus posten.
-* HTMLWindow tunen.
+* Vom Newspane aus posten.
 * Trackback & Related Technologies
 * Message filter plug-in's
-* Good PReview on Maxx OS X
+* HTMLWindow tunen.
+* Good Preview on MacOS X
 * "MIG: server died : CGSExtractEventRecordsFromMessage" errors
 * fensterliste
 * content:encoded
 * ETAGs
 * Ampheta / Radio One click subscription
-* Drag'n Drop
+* Drag'n Drop - http://ranchero.com/software/netnewswire/rssclipboard.php
 * tree
+* wxLinkText schluckt Sonderzeichen, wie '&'
+* content:encoding
+* XML redirection http://radio.userland.com/howtoRedirectRss
+* Removing Feeds is to slow
 
 Done
 * URL-Redirection auflösen
 * Asyncrone Preview anzeige
 * Feeds edieren
 * Preview abschaltbar
+* Preview ohne Posting
+* Feeds hinzufühen
+* "Open in Browser"

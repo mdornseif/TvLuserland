@@ -1,4 +1,4 @@
-__rcsid__ = "$Id: TvNewsPane.py,v 1.5 2002/11/03 21:24:59 drt Exp $"
+__rcsid__ = "$Id: TvNewsPane.py,v 1.6 2002/11/05 10:49:02 drt Exp $"
 
 from wxPython.wx import *
 from wxPython.html import *
@@ -29,30 +29,42 @@ class NewsItem(wxPanel):
         # test wxPyClickableHtmlWindow and wxGenStaticText
         self.html = wxHtmlWindow(self, -1, size=wxDLG_SZE(self, 300, -1),
                                  style=wxHW_SCROLLBAR_NEVER)
-        self.html.SetPage("<html><body>%s</body></html>" % self.create_html(item))
+        self.html.SetPage("<html><body>%s</body></html>" % item.get("description", "-no description-"))
         ir = self.html.GetInternalRepresentation()
         self.html.SetSize( (ir.GetWidth()+5, ir.GetHeight()+5))
         wdr = NewsItemFunc( self, true )
-        source = self.GetSource()
-        source.SetLabel(tv.aggregator.db.services.getconfig(item["TVsourceurl"]).get("privatename", ""))
-
+        self.SetLabelAndResize(self.GetTitle(), item.get("title", ""))
+        self.GetLink().SetLabel(item.get("link", ""))
+        self.GetSource().SetLabel(tv.aggregator.db.services.getconfig(item["TVsourceurl"]).get("privatename", ""))
+ 
         # WDR: handler declarations for NewsItem
         EVT_BUTTON(self, ID_EDIT, self.OnEdit)
-        EVT_BUTTON(self, ID_POST, self.OnPost)
+        #EVT_BUTTON(self, ID_POST, self.OnPost)
         EVT_BUTTON(self, ID_KILL, self.OnKill)
         EVT_BUTTON(self, ID_SOURCE, self.OnSource)
         EVT_LEFT_UP(self.GetSource(), self.OnSource)
-                
 
-    def create_html(self, item):
-        return "<b>%s</b><br><i>%s</i><br>%s" % (item.get("title", "").strip(),
-                                             item.get("link", "").strip()[:50],
-                                             item.get("description"))
+    def SetLabelAndResize(self, control, label):
+        control.SetLabel(str(label))
+        control.SetSize(control.GetBestSize())
+        control.GetContainingSizer().SetItemMinSize(control,
+                                                 control.GetSize().GetWidth(),
+                                                 control.GetSize().GetHeight())
+        control.GetContainingSizer().Layout()
+
     
     # WDR: methods for NewsItem
+
+    def GetLink(self):
+        return self.FindWindowById(ID_LINK)
+        #return wxPyTypeCast( self.FindWindowById(ID_LINK), "wxStaticText" )
+
+    def GetTitle(self):
+        return wxPyTypeCast( self.FindWindowById(ID_TITLE), "wxStaticText" )
+
     def GetSource(self):
         return self.FindWindowById(ID_SOURCE)
-        return wxPyTypeCast( self.FindWindowById(ID_SOURCE), "wxStaticText" )
+        #return wxPyTypeCast( self.FindWindowById(ID_SOURCE), "wxStaticText" )
 
     def GetHtml(self):
         return wxPyTypeCast( self.FindWindowById(ID_HTML), "wxHtmlWindow" )

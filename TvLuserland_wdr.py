@@ -145,41 +145,51 @@ def ReadNewsFunc( parent, call_fit = true, set_sizer = true ):
     
     return item0
 
-ID_SOURCE = 10014
-ID_HTML = 10015
-ID_KILL = 10016
-ID_POST = 10017
-ID_EDIT = 10018
+ID_TITLE = 10014
+ID_SOURCE = 10015
+ID_LINK = 10016
+ID_HTML = 10017
+ID_KILL = 10018
+ID_EDIT = 10019
 
 def NewsItemFunc( parent, call_fit = true, set_sizer = true ):
     item0 = wxBoxSizer( wxHORIZONTAL )
     
     item1 = wxBoxSizer( wxVERTICAL )
     
-    item2 = wxClickableText( parent, ID_SOURCE, "source", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT )
-    item2.SetFont( wxFont( 10, wxSWISS, wxNORMAL, wxNORMAL ) )
-    item1.AddWindow( item2, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 )
-
-    item3 = wxBoxSizer( wxHORIZONTAL )
-    parent.itemsizer = item3
+    item2 = wxFlexGridSizer( 0, 2, 0, 0 )
+    item2.AddGrowableCol( 1 )
     
-    item4 = parent.html
-    item3.AddWindow( item4, 0, wxGROW|wxALIGN_CENTER_HORIZONTAL, 15 )
+    item3 = wxStaticText( parent, ID_TITLE, "-unset-", wxDefaultPosition, wxDefaultSize, 0 )
+    item3.SetFont( wxFont( 16, wxSWISS, wxNORMAL, wxBOLD ) )
+    item2.AddWindow( item3, 0, wxALIGN_CENTER_VERTICAL|wxALL, 0 )
 
-    item5 = wxBoxSizer( wxVERTICAL )
+    item4 = wxClickableText( parent, ID_SOURCE, "source", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT )
+    item4.SetFont( wxFont( 10, wxSWISS, wxNORMAL, wxNORMAL ) )
+    item2.AddWindow( item4, 0, wxALIGN_RIGHT, 5 )
+
+    item5 = wxLinkText( parent, ID_LINK, "-unset-", wxDefaultPosition, wxDefaultSize, 0 )
+    item2.AddWindow( item5, 0, wxALIGN_CENTER_VERTICAL, 5 )
+
+    item1.AddSizer( item2, 0, wxGROW|wxALIGN_CENTER_HORIZONTAL|wxLEFT, 10 )
+
+    item6 = wxBoxSizer( wxHORIZONTAL )
+    parent.itemsizer = item6
     
-    item6 = wxButton( parent, ID_KILL, "Kill", wxDefaultPosition, wxDefaultSize, 0 )
-    item5.AddWindow( item6, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item7 = parent.html
+    item6.AddWindow( item7, 0, wxGROW|wxALIGN_CENTER_HORIZONTAL, 15 )
 
-    item7 = wxButton( parent, ID_POST, "Post", wxDefaultPosition, wxDefaultSize, 0 )
-    item5.AddWindow( item7, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item8 = wxBoxSizer( wxVERTICAL )
+    
+    item9 = wxButton( parent, ID_KILL, "Kill", wxDefaultPosition, wxDefaultSize, 0 )
+    item8.AddWindow( item9, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item8 = wxButton( parent, ID_EDIT, "Edit", wxDefaultPosition, wxDefaultSize, 0 )
-    item5.AddWindow( item8, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
+    item10 = wxButton( parent, ID_EDIT, "Edit", wxDefaultPosition, wxDefaultSize, 0 )
+    item8.AddWindow( item10, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
-    item3.AddSizer( item5, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 0 )
+    item6.AddSizer( item8, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 0 )
 
-    item1.AddSizer( item3, 0, wxALIGN_CENTRE|wxALL, 0 )
+    item1.AddSizer( item6, 0, wxALIGN_CENTRE|wxALL, 0 )
 
     item0.AddSizer( item1, 0, wxALIGN_CENTRE|wxALL, 5 )
 
@@ -192,7 +202,7 @@ def NewsItemFunc( parent, call_fit = true, set_sizer = true ):
     
     return item0
 
-ID_CONFIGWEBLOG = 10019
+ID_CONFIGWEBLOG = 10020
 wxID_Cancel = 5101
 wxID_Ok = 5100
 
@@ -239,14 +249,14 @@ def ConfigFunc( parent, call_fit = true, set_sizer = true ):
     
     return item0
 
-ID_CWLOGSERVER = 10020
-ID_CWLOGUSER = 10021
-ID_CWLOGPASSWORD = 10022
-ID_CWLOGMETAAPI = 10023
-ID_CWLOGSETDATE = 10024
-ID_CWLOGAGGREGATOR = 10025
-ID_CWLOGDEBUG = 10026
-ID_CWLOGAUTODETECT = 10027
+ID_CWLOGSERVER = 10021
+ID_CWLOGUSER = 10022
+ID_CWLOGPASSWORD = 10023
+ID_CWLOGMETAAPI = 10024
+ID_CWLOGSETDATE = 10025
+ID_CWLOGAGGREGATOR = 10026
+ID_CWLOGDEBUG = 10027
+ID_CWLOGAUTODETECT = 10028
 
 def ConfigWeblogFunc( parent, call_fit = true, set_sizer = true ):
     item0 = wxBoxSizer( wxVERTICAL )
@@ -308,9 +318,9 @@ def ConfigWeblogFunc( parent, call_fit = true, set_sizer = true ):
     
     return item0
 
-ID_CUIITEMS = 10028
-ID_CUIDELAFTERPOST = 10029
-ID_CUIAUTOPREVIEW = 10030
+ID_CUIITEMS = 10029
+ID_CUIDELAFTERPOST = 10030
+ID_CUIAUTOPREVIEW = 10031
 
 def ConfigUiFunc( parent, call_fit = true, set_sizer = true ):
     item0 = wxBoxSizer( wxVERTICAL )
@@ -346,7 +356,7 @@ def ConfigUiFunc( parent, call_fit = true, set_sizer = true ):
     
     return item0
 
-ID_CNETTIMEOUT = 10031
+ID_CNETTIMEOUT = 10032
 
 def ConfigNetworkFunc( parent, call_fit = true, set_sizer = true ):
     item0 = wxBoxSizer( wxVERTICAL )
@@ -370,7 +380,7 @@ def ConfigNetworkFunc( parent, call_fit = true, set_sizer = true ):
     
     return item0
 
-ID_CFSDBDIR = 10032
+ID_CFSDBDIR = 10033
 
 def ConfigFsFunc( parent, call_fit = true, set_sizer = true ):
     item0 = wxBoxSizer( wxVERTICAL )
@@ -394,27 +404,25 @@ def ConfigFsFunc( parent, call_fit = true, set_sizer = true ):
     
     return item0
 
-ID_LASTREQUEST = 10033
-ID_LASTNEWITEM = 10034
-ID_ITEMSFETCHED = 10035
-ID_UNREADITEMS = 10036
-ID_LINE = 10037
-ID_ERRORS = 10038
-ID_LASTERROR = 10039
-ID_LASTERRORTEXT = 10040
-ID_TITLE = 10041
-ID_LINK = 10042
-ID_CHANNELINFO = 10043
-ID_PUBLICNAME = 10044
-ID_PRIVATENAME = 10045
-ID_PUBLICLINK = 10046
-ID_HOWOFTEN = 10047
-ID_CHECKFORREDIRECTED = 10048
-ID_FIXUMLAUTS = 10049
-ID_EXTRACTLTD = 10050
-ID_REMOVEMARKUP = 10051
-ID_KILLITEMS = 10052
-ID_REMOVESERVICE = 10053
+ID_LASTREQUEST = 10034
+ID_LASTNEWITEM = 10035
+ID_ITEMSFETCHED = 10036
+ID_UNREADITEMS = 10037
+ID_LINE = 10038
+ID_ERRORS = 10039
+ID_LASTERROR = 10040
+ID_LASTERRORTEXT = 10041
+ID_CHANNELINFO = 10042
+ID_PUBLICNAME = 10043
+ID_PRIVATENAME = 10044
+ID_PUBLICLINK = 10045
+ID_HOWOFTEN = 10046
+ID_CHECKFORREDIRECTED = 10047
+ID_FIXUMLAUTS = 10048
+ID_EXTRACTLTD = 10049
+ID_REMOVEMARKUP = 10050
+ID_KILLITEMS = 10051
+ID_REMOVESERVICE = 10052
 
 def ServiceDialogFunc( parent, call_fit = true, set_sizer = true ):
     item0 = wxBoxSizer( wxVERTICAL )
@@ -561,31 +569,28 @@ def ServiceDialogFunc( parent, call_fit = true, set_sizer = true ):
 
     item45 = wxBoxSizer( wxHORIZONTAL )
     
-    item46 = wxButton( parent, ID_REFRESH, "Refresh", wxDefaultPosition, wxDefaultSize, 0 )
+    item46 = wxButton( parent, ID_KILLITEMS, "Kill all Items of this Feed ", wxDefaultPosition, wxDefaultSize, 0 )
     item45.AddWindow( item46, 0, wxALIGN_CENTRE|wxALL, 5 )
-
-    item47 = wxButton( parent, ID_KILLITEMS, "Kill Items", wxDefaultPosition, wxDefaultSize, 0 )
-    item45.AddWindow( item47, 0, wxALIGN_CENTRE|wxALL, 5 )
 
     item0.AddSizer( item45, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item48 = wxStaticLine( parent, ID_LINE, wxDefaultPosition, wxSize(20,-1), wxLI_HORIZONTAL )
-    item0.AddWindow( item48, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+    item47 = wxStaticLine( parent, ID_LINE, wxDefaultPosition, wxSize(20,-1), wxLI_HORIZONTAL )
+    item0.AddWindow( item47, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
-    item49 = wxBoxSizer( wxHORIZONTAL )
+    item48 = wxBoxSizer( wxHORIZONTAL )
     
-    item50 = wxButton( parent, ID_REMOVESERVICE, "Remove Service", wxDefaultPosition, wxDefaultSize, 0 )
-    item49.AddWindow( item50, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item49 = wxButton( parent, ID_REMOVESERVICE, "Remove Service", wxDefaultPosition, wxDefaultSize, 0 )
+    item48.AddWindow( item49, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item49.AddSpacer( 20, 20, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item48.AddSpacer( 20, 20, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item51 = wxButton( parent, wxID_CANCEL, "Cancel", wxDefaultPosition, wxDefaultSize, 0 )
-    item49.AddWindow( item51, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item50 = wxButton( parent, wxID_CANCEL, "Cancel", wxDefaultPosition, wxDefaultSize, 0 )
+    item48.AddWindow( item50, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item52 = wxButton( parent, wxID_OK, "OK", wxDefaultPosition, wxDefaultSize, 0 )
-    item49.AddWindow( item52, 0, wxALIGN_CENTRE|wxALL, 5 )
+    item51 = wxButton( parent, wxID_OK, "OK", wxDefaultPosition, wxDefaultSize, 0 )
+    item48.AddWindow( item51, 0, wxALIGN_CENTRE|wxALL, 5 )
 
-    item0.AddSizer( item49, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
+    item0.AddSizer( item48, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
     if set_sizer == true:
         parent.SetAutoLayout( true )
@@ -618,9 +623,9 @@ def ServiceListFunc( parent, call_fit = true, set_sizer = true ):
 
 # Menubar functions
 
-ID_PREFERENCES = 10054
-ID_File = 10055
-ID_HELP = 10056
+ID_PREFERENCES = 10053
+ID_File = 10054
+ID_HELP = 10055
 
 def MenuBarFunc():
     item0 = wxMenuBar()
@@ -636,7 +641,7 @@ def MenuBarFunc():
 
 # Toolbar functions
 
-ID_TOOL = 10057
+ID_TOOL = 10056
 
 def MainToolBarFunc( parent ):
     parent.SetMargins( [2,2] )
