@@ -230,7 +230,6 @@
                             <size>10</size>
                             <family>swiss</family>
                         </font>
-                        <fg>#0000FF</fg>
                         <label>source</label>
                     </object>
                 </object>
@@ -1087,7 +1086,6 @@
                     <object class="wxChoice" name="ID_HOWOFTEN">
                         <size>100,-1</size>
                         <content>
-                            <item>ChoiceItem</item>
                             <item>30m</item>
                             <item>1h</item>
                             <item>2h</item>

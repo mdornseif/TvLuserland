@@ -9,6 +9,7 @@ from wxPython.wx import *
 # Custom source
 from ClickableText import *
 
+
 # Window functions
 
 ID_TEXT = 10000
@@ -156,7 +157,6 @@ def NewsItemFunc( parent, call_fit = true, set_sizer = true ):
     item1 = wxBoxSizer( wxVERTICAL )
     
     item2 = wxClickableText( parent, ID_SOURCE, "source", wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT )
-    item2.SetForegroundColour( wxBLUE )
     item2.SetFont( wxFont( 10, wxSWISS, wxNORMAL, wxNORMAL ) )
     item1.AddWindow( item2, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 )
 
@@ -496,7 +496,7 @@ def ServiceDialogFunc( parent, call_fit = true, set_sizer = true ):
     item26 = wxStaticText( parent, ID_TEXT, "Link", wxDefaultPosition, wxDefaultSize, 0 )
     item23.AddWindow( item26, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
-    item27 = wxStaticText( parent, ID_LINK, "-unset-", wxDefaultPosition, wxDefaultSize, 0 )
+    item27 = wxLinkText( parent, ID_LINK, "-unset-", wxDefaultPosition, wxDefaultSize, 0 )
     item23.AddWindow( item27, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 )
 
     item21.AddSizer( item23, 0, wxGROW|wxALIGN_CENTER_VERTICAL|wxALL, 5 )
@@ -533,7 +533,7 @@ def ServiceDialogFunc( parent, call_fit = true, set_sizer = true ):
     item30.AddWindow( item37, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
     item38 = wxChoice( parent, ID_HOWOFTEN, wxDefaultPosition, wxSize(100,-1), 
-        ["ChoiceItem","30m","1h","2h","3h ","4h","5h","6h","8h","12h","18h","24h","48h","72h"] , 0 )
+        ["30m","1h","2h","3h ","4h","5h","6h","8h","12h","18h","24h","48h","72h"] , 0 )
     item30.AddWindow( item38, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP, 5 )
 
     item39 = wxStaticText( parent, ID_TEXT, "Options", wxDefaultPosition, wxDefaultSize, 0 )
