@@ -8,6 +8,7 @@ reading rss files from the network, 'config' is only to be written by the GUI.
 
 """
 
+__rcsid__ = "$Id: __init__.py,v 1.5 2002/11/04 22:43:55 drt Exp $"
 
 # Try using cPickle and cStringIO if available.
 try:
@@ -124,7 +125,9 @@ def getsubscriptions():
             feedinfo_cache = ret
             feedinfo_cacchetime = time.time()
     except IOError:
-        ret = ["http://radio.weblogs.com/0112292/"]
+        ret = ["http://radio.weblogs.com/0112292/rss.xml"]
+    except OSError:
+        ret = ["http://radio.weblogs.com/0112292/rss.xml"]
     return ret
 
 def savesubscriptions(subscriptions):
@@ -136,7 +139,7 @@ def savesubscriptions(subscriptions):
         y = getservice(x)
         config = y["config"]
         feedinfo = y["feedinfo"]
-        title = config.get("publicname", feedinfo.get("title", "Unfnown title for: %s" % x))
+        title = config.get("publicname", feedinfo.get("title", "Unknown title for: %s" % x))
         outlines.append('<outline title="%s" xmlUrl="%s" />' % (title.replace("&", "&amp;"), x.replace("&", "&amp;")))
 
     print "saving", time.time()
